@@ -7,6 +7,8 @@ import reactivemongo.api._
 
 import lila.db.api._
 import lila.user.User
+import reactivemongo.bson.BSONDocument
+import reactivemongo.core.commands.Count
 import tube.teamTube
 
 object TeamRepo {
@@ -42,6 +44,8 @@ object TeamRepo {
     $update(
       $select(teamId) ++ Json.obj("requests.user" -> $ne(request.user)),
       $push("requests", request.user))
+
+  def exists(id: String) : Fu[Boolean] = fuccess(true)
 
   val enabledQuery = Json.obj("enabled" -> true)
 
