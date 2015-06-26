@@ -1,6 +1,8 @@
 package lila
 
-package object team extends PackageObject with WithPlay {
+import lila.socket.WithSocket
+
+package object team extends PackageObject with WithPlay with WithSocket {
 
   object tube {
 
