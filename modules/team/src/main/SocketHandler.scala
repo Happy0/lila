@@ -1,5 +1,6 @@
 package lila.team
 
+
 import actorApi._
 import akka.pattern.ask
 import akka.actor.{ActorSelection, ActorRef}
@@ -8,6 +9,8 @@ import lila.security.Flood
 import lila.socket.Handler
 import lila.user.User
 import lila.socket.actorApi.{Connected => _, _}
+import lila.common.PimpedJson._
+import makeTimeout.short
 
 private[team] class SocketHandler(
                                    hub: lila.hub.Env,
@@ -38,7 +41,14 @@ private[team] class SocketHandler(
                          teamId: String,
                          uid: String,
                          member: LiveMember): Handler.Controller = {
-    case _ =>
+
+    case ("p", o) => o int "v" foreach { v => socket ! PingVersion(uid, v) }
+
+    case ("talk", o) => o str "d" foreach { text =>
+      member.userId foreach { userId =>
+        chat ! lila.chat.actorApi.UserTalk(teamId, userId, text, socket)
+      }
+    }
   }
 
 

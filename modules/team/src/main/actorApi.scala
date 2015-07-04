@@ -2,13 +2,22 @@ package lila.team
 package actorApi
 
 import lila.socket.SocketMember
-import lila.tournament._
 import lila.user.User
 
 private[team] case class LiveMember (
                                  channel: JsChannel,
                                  userId: Option[String],
                                  troll: Boolean) extends SocketMember
+
+private[team] object LiveMember {
+  def apply(channel: JsChannel, user: Option[User]): LiveMember = LiveMember(
+    channel = channel,
+    userId = user map (_.id),
+    troll = user.??(_.troll))
+}
+
+private[team] case class Messadata(trollish: Boolean = false)
+
 private[team] object Member {
   def apply(channel: JsChannel, user: Option[User]): LiveMember = LiveMember (
     channel = channel,
@@ -22,6 +31,8 @@ private[team] case class Join(
                                      version: Int)
 
 private[team] case class Connected(enumerator: JsEnumerator, member: LiveMember)
+
+private[team] case object NotifyCrowd
 
 case class InsertTeam(team: Team)
 case class RemoveTeam(id: String)
