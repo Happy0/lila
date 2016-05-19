@@ -4,4 +4,4 @@ import lila.forum.{Topic, Post}
 
 sealed trait Notification
 
-case class Mentioned(mentionedBy: String, post: Post, topic: Topic) extends Notification
+case class MentionedInThread(mentionedBy: String, topicId: String, postId: String) extends Notification
