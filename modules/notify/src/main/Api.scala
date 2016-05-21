@@ -2,7 +2,9 @@ package lila.notify
 
 import lila.common.paginator.Paginator
 
-private[notif] final class Api() {
+private[notify] final class Api() {
 
-  def getNotifications : Fu[Paginator[Notification]] = ???
+  def getNotifications(userId: String) : Fu[Paginator[Notification]] = ???
+
+  def addNotification(userId: String, notification: Notification) = ???
 }
