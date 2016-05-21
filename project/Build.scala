@@ -53,7 +53,7 @@ object ApplicationBuild extends Build {
 
   lazy val modules = Seq(
     chess, common, db, rating, user, security, wiki, hub, socket,
-    message, notification, notify, i18n, game, bookmark, search,
+    message, challegeNotifications, notifications, i18n, game, bookmark, search,
     gameSearch, timeline, forum, forumSearch, team, teamSearch,
     analyse, mod, site, round, lobby, setup,
     importer, tournament, simul, relation, report, pref, // simulation,
@@ -316,11 +316,11 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= provided(play.api, RM)
   )
 
-  lazy val notification = project("notification", Seq(common, user, hub)).settings(
+  lazy val challegeNotifications = project("notification", Seq(common, user, hub)).settings(
     libraryDependencies ++= provided(play.api)
   )
 
-  lazy val notify = project("notify", Seq(common, db, user, hub)).settings(
+  lazy val notifications = project("notify", Seq(common, db, user, hub)).settings(
     libraryDependencies ++= provided(play.api, RM)
   )
 
