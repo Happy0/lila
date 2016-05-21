@@ -156,6 +156,15 @@ package notify {
 
   case class NewNotification(notification: Notification, unreadNotifications: Int)
 
+  object Notification {
+    implicit val notificationWrites : Writes[Notification] = new Writes[Notification] {
+      def writes(notification: Notification): JsValue = {
+        Json.obj()
+      }
+
+    }
+  }
+
 }
 
 package router {

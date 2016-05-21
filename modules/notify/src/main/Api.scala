@@ -11,9 +11,8 @@ private[notify] final class Api(bus: lila.common.Bus) {
   def addNotification(userId: String, notification: Notification) = {
     // Add to database
 
-    val numUnreadNotifications = 1
     // Notify client of new notification
-    notifyUserIfLoggedIn(userId, numUnreadNotifications)
+    notifyUserIfLoggedIn(userId, notification)
   }
 
   def notifyUserIfLoggedIn(userId: String, notification: Notification) = {
