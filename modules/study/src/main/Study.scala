@@ -12,6 +12,7 @@ case class Study(
     ownerId: User.ID,
     visibility: Study.Visibility,
     settings: Settings,
+    views: Study.Views,
     createdAt: DateTime) {
 
   import Study._
@@ -34,6 +35,8 @@ case class Study(
 object Study {
 
   def toName(str: String) = str.trim take 100
+
+  case class Views(value: Int) extends AnyVal
 
   sealed trait Visibility {
     lazy val key = toString.toLowerCase
@@ -76,8 +79,9 @@ object Study {
       members = StudyMembers(Map(user.id -> owner)),
       position = Position.Ref("", Path.root),
       ownerId = user.id,
-      visibility = Visibility.Private,
+      visibility = Visibility.Public,
       settings = Settings.init,
+      views = Views(1),
       createdAt = DateTime.now)
   }
 }

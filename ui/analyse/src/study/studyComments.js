@@ -23,6 +23,7 @@ module.exports = {
     var comments = node.comments || [];
     if (!comments.length) return;
     return m('div.study_comments', comments.map(function(comment) {
+      if (!comment.text) return;
       var isMine = comment.by && comment.by.id && ctrl.userId === comment.by.id;
       if (!includingMine && isMine) return;
       var canDelete = isMine || ctrl.study.members.isOwner();
@@ -42,7 +43,7 @@ module.exports = {
         ' about ',
         m('span.node', nodeFullName(node)),
         ': ',
-        m('span.text', m.trust(comment.text.replace(/\n/g, '<br>')))
+        m('span.text', m.trust(comment.text.replace(/\n\n/g, '<br>')))
       ]);
     }));
   }

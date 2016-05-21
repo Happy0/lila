@@ -1,4 +1,5 @@
 var util = require('./util');
+var initialFen = require('chessground').fen.initial;
 
 module.exports = function(send, ctrl) {
 
@@ -7,7 +8,10 @@ module.exports = function(send, ctrl) {
   var anaMoveTimeout;
   var anaDestsTimeout;
 
-  var anaDestsCache = ctrl.data.game.variant.key === 'standard' ? {
+  var anaDestsCache = (
+    ctrl.data.game.variant.key === 'standard' &&
+    ctrl.tree.root.fen.split(' ')[0] === initialFen
+  ) ? {
     '': {
       path: '',
       dests: 'iqy muC gvx ltB bqs pxF jrz nvD ksA owE'
@@ -72,9 +76,13 @@ module.exports = function(send, ctrl) {
   this.sendAnaDests = function(req) {
     clearTimeout(anaDestsTimeout);
     withoutStandardVariant(req);
-    if (anaDestsCache[req.path]) return handlers.dests(anaDestsCache[req.path]);
-    this.send('anaDests', req);
-    anaDestsTimeout = setTimeout(this.sendAnaDests.bind(this, req), 3000);
+    if (anaDestsCache[req.path]) setTimeout(function() {
+      handlers.dests(anaDestsCache[req.path]);
+    }, 100);
+    else {
+      this.send('anaDests', req);
+      anaDestsTimeout = setTimeout(this.sendAnaDests.bind(this, req), 3000);
+    }
   }.bind(this);
 
   this.sendForecasts = function(req) {

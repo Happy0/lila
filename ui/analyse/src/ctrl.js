@@ -18,7 +18,6 @@ var explorerCtrl = require('./explorer/explorerCtrl');
 var router = require('game').router;
 var game = require('game').game;
 var crazyValid = require('./crazy/crazyValid');
-var tour = require('./tour');
 var studyCtrl = require('./study/studyCtrl');
 var m = require('mithril');
 
@@ -41,11 +40,12 @@ module.exports = function(opts) {
   initialize(opts.data);
 
   var initialPath = treePath.root;
-  if (opts.path) {
+  if (opts.initialPly) {
+    var plyStr = opts.initialPly === 'url' ? (location.hash ? location.hash.replace(/#/, '') : treePath.root) : opts.initialPly;
     var mainline = treeOps.mainlineNodeList(this.tree.root);
-    if (opts.path === 'last') initialPath = treePath.fromNodeList(mainline);
+    if (plyStr === 'last') initialPath = treePath.fromNodeList(mainline);
     else {
-      var ply = parseInt(opts.path);
+      var ply = parseInt(plyStr);
       if (ply) initialPath = treeOps.takePathWhile(mainline, function(n) {
         return n.ply <= ply;
       });
@@ -438,7 +438,7 @@ module.exports = function(opts) {
       dest: move[1],
       brush: brush
     };
-  }
+  };
 
   this.explorerMove = function(uci) {
     var move = decomposeUci(uci);
@@ -462,6 +462,5 @@ module.exports = function(opts) {
   keyboard(this);
   startCeval();
   this.explorer.setNode();
-  tour.init(this.explorer);
   this.study = opts.study ? studyCtrl.init(opts.study, opts.chat, this) : null;
 };

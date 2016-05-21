@@ -81,6 +81,23 @@ div.underboard {
 .underboard_form .close {
   float: right;
 }
+div.underboard .notif {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 53px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #759900;
+  color: #fff;
+  font-size: 1.4em;
+}
+div.underboard .notif.error {
+  background-color: #d59120;
+}
 .study_comment_form form {
   display: flex;
   align-items: center;
@@ -96,6 +113,7 @@ div.underboard {
   text-align: left;
 }
 .study_comments .comment {
+  font-size: 1.2em;
   background: #e0e0e0;
   padding: 5px 10px;
   margin-bottom: 10px;
@@ -288,13 +306,17 @@ div.underboard {
 .study_buttons > div {
   justify-content: flex-start;
 }
-.study_buttons .button {
+.study_buttons .member_buttons .button {
   display: inline-block;
   margin-right: 10px;
 }
 .study_buttons .button i {
   height: 16px;
   display: inline-block;
+}
+.study_buttons .button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .study_buttons .button:hover {
   color: #3893E8;
@@ -441,16 +463,25 @@ form .editor a.button {
 }
 .study_metadata h2 {
   font-size: 1.3em;
-  padding: 7px 0 7px 12px;
+  padding: 7px 12px 7px 12px;
   font-weight: normal;
-  overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
+  display: flex;
+  justify-content: space-between;
 }
-.study_metadata h2::before {
+.study_metadata .name::before {
   font-size: 1.3em;
   margin-right: 8px;
   opacity: 0.7;
+}
+.study_metadata h2 .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.study_metadata h2 .views {
+  padding-left: 12px;
+  margin-left: 12px;
+  border-left: 1px solid #ccc;
 }
 .study_metadata table {
   border: none;
