@@ -1,5 +1,9 @@
 package lila.notify
 
-sealed trait Notification
+import org.joda.time.DateTime
 
-case class MentionedInThread(mentionedBy: String, topicId: String, postId: String) extends Notification
+sealed trait NotificationContent
+
+case class MentionedInThread(mentionedBy: String, topicId: String, postId: String) extends NotificationContent
+
+case class Notification(content: NotificationContent, createdAt: DateTime)
