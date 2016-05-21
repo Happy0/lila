@@ -3,6 +3,7 @@ var storedProp = require('../util').storedProp;
 var partial = require('chessground').util.partial;
 var xhr = require('./studyXhr');
 var dialog = require('./dialog');
+var tours = require('./studyTour');
 
 var concealChoices = [
   ['', "Reveal all moves at once"],
@@ -37,6 +38,7 @@ module.exports = {
       vm.open = true;
       loadVariants();
       vm.initial(false);
+      if (lichess.once('insight-tour-chapter')) tours.chapter(vm.tab);
     };
     var close = function() {
       vm.open = false;
@@ -62,7 +64,8 @@ module.exports = {
         close();
         setTab();
       },
-      chapters: chapters
+      chapters: chapters,
+      startTour: partial(tours.chapter, vm.tab)
     }
   },
   view: function(ctrl) {
@@ -80,7 +83,13 @@ module.exports = {
     return dialog.form({
       onClose: ctrl.close,
       content: [
-        activeTab === 'edit' ? null : m('h2', 'New chapter'),
+        activeTab === 'edit' ? null : m('h2', [
+          'New chapter',
+          m('i.help', {
+            'data-icon': '',
+            onclick: ctrl.startTour
+          })
+        ]),
         m('form.material.form', {
           onsubmit: function(e) {
             ctrl.submit({

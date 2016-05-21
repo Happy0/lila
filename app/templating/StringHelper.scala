@@ -47,8 +47,9 @@ trait StringHelper { self: NumberHelper =>
     }
   }
 
-  // Matches a lichess username with a '@' prefix (I hope.) Example: @ornicar
-  private val atUsernameRegex = "(?<=^|(?<=[^a-zA-Z0-9-_\\.]))@([A-Za-z]+[A-Za-z0-9]+)".r
+  // Matches a lichess username with a '@' prefix (I hope), in the middle of word boundaries
+  // Example: everyone says @ornicar is a pretty cool guy
+  private val atUsernameRegex = """\B(@([\w-]+))""".r
 
   private val urlRegex = """(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s<>]+|\(([^\s<>]+|(\([^\s<>]+\)))*\))+(?:\(([^\s<>]+|(\([^\s<>]+\)))*\)|[^\s`!\[\]{};:'".,<>?«»“”‘’]))""".r
 
@@ -58,8 +59,8 @@ trait StringHelper { self: NumberHelper =>
     * @return The text as a HTML hyperlink
     */
   def addUserProfileLinks(text: String) = atUsernameRegex.replaceAllIn(text, m => {
-    var user = m group 1
-    var url = "lichess.org/@/" ++ user
+    var user = m group 2
+    var url = s"$netDomain/@/$user"
 
     s"""<a href="${prependHttp(url)}">@$user</a>"""
   })
