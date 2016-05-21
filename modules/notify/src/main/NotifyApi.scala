@@ -2,7 +2,7 @@ package lila.notify
 
 import lila.common.paginator.Paginator
 import lila.hub.actorApi.SendTo
-import lila.hub.actorApi.notify.Notification
+import lila.hub.actorApi.notify.{NewNotification, Notification}
 
 final class NotifyApi(bus: lila.common.Bus) {
 
@@ -11,14 +11,18 @@ final class NotifyApi(bus: lila.common.Bus) {
   def addNotification(userId: String, notification: Notification) = {
     // Add to database
 
+    val unreadNotifications = 1
+    val newNotification = NewNotification(notification, unreadNotifications)
+
     // Notify client of new notification
-    notifyUserIfLoggedIn(userId, notification)
+    notifyConnectedClients(userId, newNotification)
   }
 
-  def notifyUserIfLoggedIn(userId: String, notification: Notification) = {
+  def notifyConnectedClients(userId: String, notification: NewNotification) = {
+
     val notificationsEventKey = "newNotification"
     val notificationEvent = SendTo(userId, notificationsEventKey, notification)
-    bus.publish(notificationEvent, 'Users)
+    bus.publish(notificationEvent, 'users)
   }
 
 
