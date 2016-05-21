@@ -158,8 +158,21 @@ package notify {
 
   object Notification {
     implicit val notificationWrites : Writes[Notification] = new Writes[Notification] {
+
+      def writes(notificationContent : NotificationContent) = {
+        notificationContent match {
+          case MentionedInThread(mentionedBy, topicId: String, postId: String) => Json.obj()
+        }
+      }
+
       def writes(notification: Notification): JsValue = {
-        Json.obj()
+        val body = notification.content
+
+        val notificationType = body match {
+          case MentionedInThread(_,_,_) => "mentioned"
+        }
+
+        Json.obj("type" -> notificationType, "content" -> writes(body))
       }
 
     }
