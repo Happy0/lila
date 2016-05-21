@@ -1,4 +1,4 @@
-package lila.notif
+package lila.notify
 
 import lila.common.paginator.Paginator
 
