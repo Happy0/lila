@@ -145,6 +145,19 @@ case class LichessThread(
   notification: Boolean = false)
 }
 
+package notify {
+
+  import org.joda.time.DateTime
+
+  sealed trait NotificationContent
+  case class MentionedInThread(mentionedBy: String, topicId: String, postId: String) extends NotificationContent
+
+  case class Notification(content: NotificationContent, createdAt: DateTime)
+
+  case class NewNotification(notification: Notification, unreadNotifications: Int)
+
+}
+
 package router {
 case class Abs(route: Any)
 case class Nolang(route: Any)
