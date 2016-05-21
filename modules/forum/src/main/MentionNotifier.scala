@@ -38,9 +38,9 @@ final class MentionNotifier(notifyApi: NotifyApi) {
     * @return
     */
   def informOfMention(post: Post, topic: Topic, mentionedUser: String, mentionedBy: String): Unit = {
-    val notification = Notification(MentionedInThread(mentionedBy, post.categId, topic.name), DateTime.now)
+    val notification = Notification(mentionedUser, MentionedInThread(mentionedBy, post.categId, topic.name), DateTime.now)
 
-    notifyApi.addNotification(mentionedUser, notification)
+    notifyApi.addNotification(notification)
   }
 
   /**

@@ -8,20 +8,20 @@ final class NotifyApi(bus: lila.common.Bus) {
 
   def getNotifications(userId: String) : Fu[Paginator[Notification]] = ???
 
-  def addNotification(userId: String, notification: Notification) = {
+  def addNotification(notification: Notification) = {
     // Add to database
 
     val unreadNotifications = 1
     val newNotification = NewNotification(notification, unreadNotifications)
 
     // Notify client of new notification
-    notifyConnectedClients(userId, newNotification)
+    notifyConnectedClients(newNotification)
   }
 
-  def notifyConnectedClients(userId: String, notification: NewNotification) = {
+  def notifyConnectedClients(newNotification: NewNotification) = {
 
     val notificationsEventKey = "new_notification"
-    val notificationEvent = SendTo(userId, notificationsEventKey, notification)
+    val notificationEvent = SendTo(newNotification.notification.notifies, notificationsEventKey, newNotification)
     bus.publish(notificationEvent, 'users)
   }
 

@@ -152,7 +152,7 @@ package notify {
   sealed trait NotificationContent
   case class MentionedInThread(mentionedBy: String, topic: String, post: String) extends NotificationContent
 
-  case class Notification(content: NotificationContent, createdAt: DateTime)
+  case class Notification(notifies: String, content: NotificationContent, createdAt: DateTime)
 
   case class NewNotification(notification: Notification, unreadNotifications: Int)
 
@@ -180,7 +180,6 @@ package notify {
       def writes(newNotification: NewNotification) = {
         Json.obj("notification" -> writeNotification(newNotification.notification), "unread" -> newNotification.unreadNotifications)
       }
-
     }
   }
 
