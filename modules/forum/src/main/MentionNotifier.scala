@@ -1,13 +1,16 @@
 package lila.forum
 
 import lila.common.Future
+import lila.hub.actorApi.notify.{Notification, MentionedInThread}
+import lila.notify.NotifyApi
+import org.joda.time.DateTime
 
 /**
   * Notifier to inform users if they have been mentioned in a post
   *
   * @param messageApi Api for sending inbox messages
   */
-final class MentionNotifier(messageApi: lila.message.Api) {
+final class MentionNotifier(notifyApi: NotifyApi) {
 
   /**
     * Notify any users mentioned in a post that they have been mentioned
@@ -15,13 +18,13 @@ final class MentionNotifier(messageApi: lila.message.Api) {
     * @param post The post which may or may not mention users
     * @return
     */
-  def notifyMentionedUsers(post: Post, topic: Topic): Fu[Unit] = {
+  def notifyMentionedUsers(post: Post, topic: Topic): Unit = {
 
     post.userId match {
       case None => fuccess()
       case Some(author) =>
         val mentionedUsers = extractMentionedUsers(post)
-        Future.applySequentially(mentionedUsers)(informOfMention(post, topic, _, author))
+        mentionedUsers.foreach(informOfMention(post, topic, _, author))
     }
   }
 
@@ -34,15 +37,10 @@ final class MentionNotifier(messageApi: lila.message.Api) {
     * @param mentionedBy   The user that mentioned the user
     * @return
     */
-  def informOfMention(post: Post, topic: Topic, mentionedUser: String, mentionedBy: String): Fu[Unit] = {
-    val inboxNotificationMessage = lila.hub.actorApi.message.LichessThread(
-      from = "Lichess",
-      to = mentionedUser,
-      subject = mentionedBy ++ " mentioned you.",
-      message = mentionedBy ++ " mentioned you in the following forum post: " ++
-        "http://lichess.org/forum/" ++ post.categId ++ "/" ++ topic.name ++ "#" ++ Integer.toString(post.number))
+  def informOfMention(post: Post, topic: Topic, mentionedUser: String, mentionedBy: String): Unit = {
+    val notification = Notification(MentionedInThread(mentionedBy, topic.id, post.id), DateTime.now)
 
-    messageApi.lichessThread(inboxNotificationMessage)
+    notifyApi.addNotification(mentionedUser, notification)
   }
 
   /**
@@ -54,13 +52,10 @@ final class MentionNotifier(messageApi: lila.message.Api) {
   def extractMentionedUsers(post: Post): List[String] = {
     val postText = post.text
 
-    postText match {
-      case postText if postText.contains('@') =>
-        val postWords = postText.split(' ')
-        postWords.filter(_.startsWith("@")).distinct.map(_.tail).toList
-      case _ => List()
-    }
-
-
+    //TODO: Extract using same regex used to highlight usernames
+    if (postText.contains('@')) {
+      val postWords = postText.split(' ')
+      postWords.filter(_.startsWith("@")).distinct.map(_.tail).toList
+    } else List()
   }
 }

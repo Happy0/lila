@@ -4,7 +4,7 @@ import lila.common.paginator.Paginator
 import lila.hub.actorApi.SendTo
 import lila.hub.actorApi.notify.Notification
 
-private[notify] final class Api(bus: lila.common.Bus) {
+final class NotifyApi(bus: lila.common.Bus) {
 
   def getNotifications(userId: String) : Fu[Paginator[Notification]] = ???
 
