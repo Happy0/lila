@@ -150,7 +150,7 @@ package notify {
   import org.joda.time.DateTime
 
   sealed trait NotificationContent
-  case class MentionedInThread(mentionedBy: String, topicId: String, postId: String) extends NotificationContent
+  case class MentionedInThread(mentionedBy: String, topic: String, post: String) extends NotificationContent
 
   case class Notification(content: NotificationContent, createdAt: DateTime)
 
@@ -162,7 +162,8 @@ package notify {
 
       def writeBody(notificationContent: NotificationContent) = {
         notificationContent match {
-          case MentionedInThread(mentionedBy, topicId: String, postId: String) => Json.obj()
+          case MentionedInThread(mentionedBy, topicId: String, postId: String) =>
+            Json.obj("mentionedBy" -> mentionedBy, "topic" -> topicId, "post" -> postId)
         }
       }
 
@@ -173,7 +174,7 @@ package notify {
           case MentionedInThread(_, _, _) => "mentioned"
         }
 
-        Json.obj("content" -> writeBody(body))
+        Json.obj("content" -> writeBody(body), "type" -> notificationType, "date" -> notification.createdAt)
       }
 
       def writes(newNotification: NewNotification) = {
