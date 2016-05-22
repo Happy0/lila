@@ -53,7 +53,7 @@ final class MentionNotifier(notifyApi: NotifyApi) {
     * @param post The post which may or may not mention users
     * @return
     */
-  def extractMentionedUsers(post: Post): List[String] = {
+  private def extractMentionedUsers(post: Post): List[String] = {
     val postText = post.text
 
     //TODO: Extract using same regex used to highlight usernames

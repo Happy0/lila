@@ -152,9 +152,12 @@ package notify {
 
   case class NewNotification(notification: Notification, unreadNotifications: Int)
 
-  case class Notification(_id: String, notifies: Notification.Notifies, content: NotificationContent, read: Notification.NotificationRead, createdAt: DateTime)
+  case class Notification(_id: String, notifies: Notification.Notifies, content: NotificationContent, read: Notification.NotificationRead, createdAt: DateTime) {
+    def id = _id
+  }
 
   object Notification {
+
     case class Notifies(value: String) extends AnyVal with StringValue
     case class NotificationRead(value: Boolean)
 
