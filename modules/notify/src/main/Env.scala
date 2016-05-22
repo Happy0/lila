@@ -5,8 +5,6 @@ import com.typesafe.config.Config
 
 final class Env(db: lila.db.Env, config: Config, system: ActorSystem) {
 
-  lazy val notifyApi = new NotifyApi(bus = system.lilaBus)
-
   val settings = new {
     val collectionNotifications = config getString "collection.notify"
 
@@ -16,6 +14,7 @@ final class Env(db: lila.db.Env, config: Config, system: ActorSystem) {
 
   private lazy val repo = new NotificationRepo(coll = db(collectionNotifications))
 
+  lazy val notifyApi = new NotifyApi(bus = system.lilaBus, repo = repo)
 }
 
 object Env {
