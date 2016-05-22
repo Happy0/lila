@@ -1,7 +1,6 @@
-package lichess.notif
+package lila.notify
 
 import lila.db.{dsl, BSON}
-import lila.db.BSON.Writer
 import lila.hub.actorApi.notify.{MentionedInThread, Notification, NotificationContent}
 import lila.db.BSON.{ Reader, Writer }
 import lila.db.dsl._
@@ -35,7 +34,7 @@ private object BSONHandlers {
     override def reads(reader: Reader): Notification = ???
 
     override def writes(writer: Writer, n: Notification): dsl.Bdoc = $doc(
-      "id" -> n.id,
+      "_id" -> n.id,
       "created" -> n.createdAt,
       "read" -> n.read.value,
       "notifies" -> n.notifies.value,
