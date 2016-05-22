@@ -148,14 +148,21 @@ case class LichessThread(
 package notify {
 
   import org.joda.time.DateTime
+  import ornicar.scalalib.Random
 
   case class NewNotification(notification: Notification, unreadNotifications: Int)
 
-  case class Notification(notifies: Notification.Notifies, content: NotificationContent, read: Notification.NotificationRead, createdAt: DateTime)
+  case class Notification(_id: String, notifies: Notification.Notifies, content: NotificationContent, read: Notification.NotificationRead, createdAt: DateTime)
 
   object Notification {
     case class Notifies(value: String) extends AnyVal with StringValue
     case class NotificationRead(value: Boolean)
+
+    def apply(notifies: Notification.Notifies, content: NotificationContent, read: NotificationRead, createdAt: DateTime) : Notification = {
+      val idSize = 8
+      val id = Random nextStringUppercase idSize
+      new Notification(id, notifies, content, read, createdAt)
+    }
   }
 
   sealed trait NotificationContent
