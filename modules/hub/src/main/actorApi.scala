@@ -149,12 +149,12 @@ package notify {
 
   import org.joda.time.DateTime
 
+  case class NewNotification(notification: Notification, unreadNotifications: Int)
+
+  case class Notification(notifies: String, content: NotificationContent, read: Boolean, createdAt: DateTime)
+
   sealed trait NotificationContent
   case class MentionedInThread(mentionedBy: String, topic: String, post: String) extends NotificationContent
-
-  case class Notification(notifies: String, content: NotificationContent, createdAt: DateTime)
-
-  case class NewNotification(notification: Notification, unreadNotifications: Int)
 
   object NewNotification {
 
