@@ -17,8 +17,8 @@ private final class NotificationRepo(val coll: Coll) {
 
   val recentSort = $sort desc "created"
 
-  def userNotificationsQuery(userId: Notification.Notifies) = $doc("userId" -> userId.value)
+  def userNotificationsQuery(userId: Notification.Notifies) = $doc("notifies" -> userId.value)
 
-  private def unreadOnlyQuery(userId:Notification.Notifies) = $doc("userId" -> userId.value, "read" -> "false")
+  private def unreadOnlyQuery(userId:Notification.Notifies) = $doc("notifies" -> userId.value, "read" -> false)
 
 }
