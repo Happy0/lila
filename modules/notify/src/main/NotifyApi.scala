@@ -21,7 +21,7 @@ final class NotifyApi(bus: lila.common.Bus) {
   def notifyConnectedClients(newNotification: NewNotification) = {
 
     val notificationsEventKey = "new_notification"
-    val notificationEvent = SendTo(newNotification.notification.notifies, notificationsEventKey, newNotification)
+    val notificationEvent = SendTo(newNotification.notification.notifies.value, notificationsEventKey, newNotification)
     bus.publish(notificationEvent, 'users)
   }
 

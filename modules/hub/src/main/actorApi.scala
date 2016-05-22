@@ -151,10 +151,22 @@ package notify {
 
   case class NewNotification(notification: Notification, unreadNotifications: Int)
 
-  case class Notification(notifies: String, content: NotificationContent, read: Boolean, createdAt: DateTime)
+  case class Notification(notifies: Notification.Notifies, content: NotificationContent, read: Notification.NotificationRead, createdAt: DateTime)
+
+  object Notification {
+    case class Notifies(value: String) extends AnyVal with StringValue
+    case class NotificationRead(value: Boolean)
+  }
 
   sealed trait NotificationContent
-  case class MentionedInThread(mentionedBy: String, topic: String, post: String) extends NotificationContent
+  case class MentionedInThread(mentionedBy: MentionedInThread.MentionedBy,
+    topic: MentionedInThread.Topic, category: MentionedInThread.Category) extends NotificationContent
+
+  object MentionedInThread {
+    case class MentionedBy(value: String) extends AnyVal with StringValue
+    case class Topic(value: String) extends  AnyVal with StringValue
+    case class Category(value: String) extends AnyVal with StringValue
+  }
 
   object NewNotification {
 
@@ -162,8 +174,8 @@ package notify {
 
       def writeBody(notificationContent: NotificationContent) = {
         notificationContent match {
-          case MentionedInThread(mentionedBy, topicId: String, postId: String) =>
-            Json.obj("mentionedBy" -> mentionedBy, "topic" -> topicId, "post" -> postId)
+          case MentionedInThread(mentionedBy, topic, category) =>
+            Json.obj("mentionedBy" -> mentionedBy.value, "topic" -> topic.value, "category" -> category.value)
         }
       }
 

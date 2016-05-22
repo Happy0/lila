@@ -23,8 +23,10 @@ final class MentionNotifier(notifyApi: NotifyApi) {
     post.userId match {
       case None => fuccess()
       case Some(author) =>
-        val mentionedUsers = extractMentionedUsers(post)
-        mentionedUsers.foreach(informOfMention(post, topic, _, author))
+        val mentionedUsers = extractMentionedUsers(post).map(Notification.Notifies)
+        val mentionedBy = MentionedInThread.MentionedBy(author)
+
+        mentionedUsers.foreach(informOfMention(post, topic, _, mentionedBy))
     }
   }
 
@@ -37,8 +39,10 @@ final class MentionNotifier(notifyApi: NotifyApi) {
     * @param mentionedBy   The user that mentioned the user
     * @return
     */
-  def informOfMention(post: Post, topic: Topic, mentionedUser: String, mentionedBy: String): Unit = {
-    val notification = Notification(mentionedUser, MentionedInThread(mentionedBy, post.categId, topic.name), false, DateTime.now)
+  def informOfMention(post: Post, topic: Topic, mentionedUser: Notification.Notifies, mentionedBy: MentionedInThread.MentionedBy): Unit = {
+    val notificationContent = MentionedInThread(mentionedBy, MentionedInThread.Topic(topic.name), MentionedInThread.Category(post.categId))
+
+    val notification = Notification(mentionedUser, notificationContent, Notification.NotificationRead(false), DateTime.now)
 
     notifyApi.addNotification(notification)
   }
