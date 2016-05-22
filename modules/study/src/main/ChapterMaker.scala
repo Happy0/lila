@@ -1,6 +1,7 @@
 package lila.study
 
 import chess.Color
+import chess.format.pgn.Tag
 import chess.format.{ Forsyth, FEN }
 import chess.variant.{ Variant, Crazyhouse }
 import lila.game.{ Game, Pov, GameRepo, Namer }
@@ -17,7 +18,7 @@ private final class ChapterMaker(
   def apply(study: Study, data: Data, order: Int, userId: User.ID): Fu[Option[Chapter]] = {
     val orientation = Color(data.orientation) | chess.White
     data.game.??(parsePov) flatMap {
-      case None => data.pgn match {
+      case None => data.pgn.filter(_.trim.nonEmpty) match {
         case Some(pgn) => fromPgn(study, pgn, data, orientation, order, userId)
         case None      => fuccess(fromFenOrBlank(study, data, orientation, order, userId))
       }
@@ -29,7 +30,11 @@ private final class ChapterMaker(
     PgnImport(pgn).future map { res =>
       Chapter.make(
         studyId = study.id,
-        name = data.name,
+        name = (for {
+          white <- Tag.find(res.tags, "White")
+          black <- Tag.find(res.tags, "Black")
+          if Chapter isDefaultName data.name
+        } yield s"$white vs $black") | data.name,
         setup = Chapter.Setup(
           none,
           res.variant,
@@ -92,7 +97,7 @@ private final class ChapterMaker(
         conceal = data.conceal option Chapter.Ply(root.ply)).some
     }
 
-  private def game2root(game: Game, initialFen: Option[FEN] = None): Fu[Node.Root] =
+  def game2root(game: Game, initialFen: Option[FEN] = None): Fu[Node.Root] =
     initialFen.fold(GameRepo.initialFen(game)) { fen =>
       fuccess(fen.value.some)
     } map { initialFen =>
