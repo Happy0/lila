@@ -1,6 +1,7 @@
 package lila.study
 
 import chess.Color
+import chess.format.FEN
 import chess.format.pgn.{ Glyph, Tag }
 import chess.variant.Variant
 import org.joda.time.DateTime
@@ -61,10 +62,13 @@ object Chapter {
   }
 
   case class Setup(
-    gameId: Option[String],
-    variant: Variant,
-    orientation: Color,
-    fromPgn: Option[FromPgn] = None)
+      gameId: Option[String],
+      variant: Variant,
+      orientation: Color,
+      fromPgn: Option[FromPgn] = None,
+      fromFen: Option[Boolean] = None) {
+    def isFromFen = ~fromFen
+  }
 
   case class FromPgn(tags: List[Tag])
 
@@ -77,6 +81,9 @@ object Chapter {
   case class Ply(value: Int) extends AnyVal with Ordered[Ply] {
     def compare(that: Ply) = value - that.value
   }
+
+  private val defaultNamePattern = """^Chapter \d+$""".r.pattern
+  def isDefaultName(str: String) = defaultNamePattern.matcher(str).matches
 
   def toName(str: String) = str.trim take 80
 

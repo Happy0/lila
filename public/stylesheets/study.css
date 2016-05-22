@@ -58,9 +58,9 @@ body:not(.dark) .material.form .study_tabs a {
   opacity: 1;
 }
 .material.form textarea {
-  height: 120px;
+  height: 80px;
   line-height: 1.4em!important;
-  font-size: 0.9em!important;
+  font-size: 1em!important;
 }
 div.underboard {
   margin-top: 20px;
@@ -198,14 +198,22 @@ div.underboard .notif.error {
 .study_box .list > div:hover .action i {
   opacity: 1;
 }
-.study_box .members .status.contrib i {
+.study_box .members .status i {
+  opacity: 0.5;
+  transition: 2.5s;
+}
+.study_box .members .contrib i {
   opacity: 0.7;
 }
 .study_box .members .status {
-  transition: 3s;
+  transition: 2.5s;
 }
-.study_box .members .status i {
-  transition: 3s;
+.study_box .members .online i {
+  opacity: 0.8;
+  color: #759900;
+}
+.study_box .members .online.contrib i {
+  opacity: 1;
 }
 .study_box .members .status.active {
   transition: none;
@@ -368,7 +376,7 @@ div.underboard .notif.error {
   width: 20px;
   text-align: center;
   background: #ddd;
-  padding: 6px 10px;
+  padding: 3px 10px;
   margin-right: 6px;
   font-weight: bold;
   transition: 0.13s;
@@ -499,4 +507,11 @@ form .editor a.button {
   text-transform: uppercase;
   font-size: 1.1em;
   opacity: 0.7;
+}
+.study_metadata .fen {
+  font-size: 0.8em;
+}
+div.undertable_inner {
+  height: auto;
+  max-height: 200px;
 }

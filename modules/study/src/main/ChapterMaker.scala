@@ -3,11 +3,14 @@ package lila.study
 import chess.Color
 import chess.format.{ Forsyth, FEN }
 import chess.variant.{ Variant, Crazyhouse }
-import lila.game.{ Game, Pov, GameRepo }
+import lila.game.{ Game, Pov, GameRepo, Namer }
 import lila.importer.{ Importer, ImportData }
 import lila.user.User
 
-private final class ChapterMaker(domain: String, importer: Importer) {
+private final class ChapterMaker(
+    domain: String,
+    lightUser: lila.common.LightUser.Getter,
+    importer: Importer) {
 
   import ChapterMaker._
 
@@ -40,7 +43,7 @@ private final class ChapterMaker(domain: String, importer: Importer) {
 
   private def fromFenOrBlank(study: Study, data: Data, orientation: Color, order: Int, userId: User.ID): Option[Chapter] = {
     val variant = data.variant.flatMap(Variant.apply) | Variant.default
-    val root = data.fen.map(_.trim).filter(_.nonEmpty).flatMap { fenStr =>
+    (data.fen.map(_.trim).filter(_.nonEmpty).flatMap { fenStr =>
       Forsyth.<<<@(variant, fenStr)
     } match {
       case Some(sit) => Node.Root(
@@ -48,29 +51,37 @@ private final class ChapterMaker(domain: String, importer: Importer) {
         fen = FEN(Forsyth.>>(sit)),
         check = sit.situation.check,
         crazyData = sit.situation.board.crazyData,
-        children = Node.emptyChildren)
+        children = Node.emptyChildren) -> true
       case None => Node.Root(
         ply = 0,
         fen = FEN(variant.initialFen),
         check = false,
         crazyData = variant.crazyhouse option Crazyhouse.Data.init,
-        children = Node.emptyChildren)
+        children = Node.emptyChildren) -> false
+    }) match {
+      case (root, isFromFen) => Chapter.make(
+        studyId = study.id,
+        name = data.name,
+        setup = Chapter.Setup(
+          none,
+          variant,
+          orientation,
+          fromFen = isFromFen option true),
+        root = root,
+        order = order,
+        ownerId = userId,
+        conceal = None).some
     }
-    Chapter.make(
-      studyId = study.id,
-      name = data.name,
-      setup = Chapter.Setup(none, variant, orientation),
-      root = root,
-      order = order,
-      ownerId = userId,
-      conceal = None).some
   }
 
   private def fromPov(study: Study, pov: Pov, data: Data, order: Int, userId: User.ID, initialFen: Option[FEN] = None): Fu[Option[Chapter]] =
     game2root(pov.game, initialFen) map { root =>
       Chapter.make(
         studyId = study.id,
-        name = data.name,
+        name =
+          if (Chapter isDefaultName data.name)
+            Namer.gameVsText(pov.game, withRatings = false)(lightUser)
+          else data.name,
         setup = Chapter.Setup(
           !pov.game.synthetic option pov.game.id,
           pov.game.variant,
