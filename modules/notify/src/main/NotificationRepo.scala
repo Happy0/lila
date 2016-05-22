@@ -3,7 +3,7 @@ package lila.notify
 import lila.db.dsl._
 import lila.hub.actorApi.notify.Notification
 
-private final class NotificationRepo(coll: Coll) {
+private final class NotificationRepo(val coll: Coll) {
 
   import BSONHandlers._
 
@@ -15,7 +15,9 @@ private final class NotificationRepo(coll: Coll) {
     coll.count(unreadOnlyQuery(userId).some)
   }
 
-  private def userNotificationsQuery(userId: Notification.Notifies) = $doc("userId" -> userId.value)
+  val recentSort = $sort desc "created"
+
+  def userNotificationsQuery(userId: Notification.Notifies) = $doc("userId" -> userId.value)
 
   private def unreadOnlyQuery(userId:Notification.Notifies) = $doc("userId" -> userId.value, "read" -> "false")
 
