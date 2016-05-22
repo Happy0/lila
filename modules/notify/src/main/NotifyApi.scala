@@ -9,12 +9,14 @@ final class NotifyApi(bus: lila.common.Bus, repo: NotificationRepo) {
   def getNotifications(userId: String) : Fu[Paginator[Notification]] = ???
 
   def addNotification(notification: Notification) = {
-    // Add to database
 
     val unreadNotifications = 1
     val newNotification = NewNotification(notification, unreadNotifications)
 
-    // Notify client of new notification
+    // Add to database
+    repo.insert(notification)
+
+    // Notify client of new notification if connected
     notifyConnectedClients(newNotification)
   }
 
