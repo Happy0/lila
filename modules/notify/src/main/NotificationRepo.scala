@@ -11,6 +11,10 @@ private final class NotificationRepo(val coll: Coll) {
     coll.insert(notification).void
   }
 
+  def markAllRead(notifies: Notification.Notifies) : Funit = {
+    coll.update(unreadOnlyQuery(notifies), $set("read" -> true), multi=true).void
+  }
+
   def unreadNotificationsCount(userId: Notification.Notifies) : Fu[Int] = {
     coll.count(unreadOnlyQuery(userId).some)
   }

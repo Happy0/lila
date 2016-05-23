@@ -20,13 +20,18 @@ final class NotifyApi(bus: lila.common.Bus, repo: NotificationRepo) {
     maxPerPage = perPage
   )
 
+  def markAllRead(userId: Notification.Notifies) = repo.markAllRead(userId)
+
   def getUnseenNotificationCount(userId: Notification.Notifies): Fu[Int] = repo.unreadNotificationsCount(userId)
 
   def addNotification(notification: Notification): Funit = {
 
     // Add to database and then notify any connected clients of the new notification
     repo.insert(notification) >>
-      getUnseenNotificationCount(notification.notifies).map(NewNotification(notification, _)).map(notifyConnectedClients)
+      getUnseenNotificationCount(notification.notifies).
+        map(NewNotification(notification, _)).
+        map(notifyConnectedClients)
+
   }
 
   private def notifyConnectedClients(newNotification: NewNotification) : Unit = {
