@@ -1,9 +1,7 @@
 package lila.notify
 
-
 import org.joda.time.DateTime
 import ornicar.scalalib.Random
-import play.api.libs.json.{JsValue, Json, Writes}
 
 case class NewNotification(notification: Notification, unreadNotifications: Int)
 

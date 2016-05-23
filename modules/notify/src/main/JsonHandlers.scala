@@ -25,7 +25,6 @@ private object JSONHandlers {
     def writes(newNotification: NewNotification) = {
       Json.obj("notification" -> writeNotification(newNotification.notification), "unread" -> newNotification.unreadNotifications)
     }
-
   }
 }
 
