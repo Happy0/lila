@@ -11,13 +11,14 @@ case class PageData(
   teamNbRequests: Int,
   nbMessages: Int,
   nbChallenges: Int,
+  nbNotifications: Int,
   pref: Pref,
   blindMode: Boolean,
   hasFingerprint: Boolean)
 
 object PageData {
 
-  val default = PageData(Nil, 0, 0, 0, Pref.default, false, false)
+  val default = PageData(Nil, 0, 0, 0, 0, Pref.default, false, false)
 
   def anon(blindMode: Boolean) = default.copy(blindMode = blindMode)
 }
