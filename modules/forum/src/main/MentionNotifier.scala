@@ -1,14 +1,14 @@
 package lila.forum
 
 import lila.common.Future
-import lila.hub.actorApi.notify.{Notification, MentionedInThread}
+import lila.notify.{Notification, MentionedInThread}
 import lila.notify.NotifyApi
 import org.joda.time.DateTime
 
 /**
   * Notifier to inform users if they have been mentioned in a post
   *
-  * @param messageApi Api for sending inbox messages
+  * @param notifyApi Api for sending inbox messages
   */
 final class MentionNotifier(notifyApi: NotifyApi) {
 
@@ -19,14 +19,11 @@ final class MentionNotifier(notifyApi: NotifyApi) {
     * @return
     */
   def notifyMentionedUsers(post: Post, topic: Topic): Unit = {
+    post.userId foreach { author =>
+      val mentionedUsers = extractMentionedUsers(post).map(Notification.Notifies)
+      val mentionedBy = MentionedInThread.MentionedBy(author)
 
-    post.userId match {
-      case None => fuccess()
-      case Some(author) =>
-        val mentionedUsers = extractMentionedUsers(post).map(Notification.Notifies)
-        val mentionedBy = MentionedInThread.MentionedBy(author)
-
-        mentionedUsers.foreach(informOfMention(post, topic, _, mentionedBy))
+      mentionedUsers.foreach(informOfMention(post, topic, _, mentionedBy))
     }
   }
 
@@ -53,13 +50,13 @@ final class MentionNotifier(notifyApi: NotifyApi) {
     * @param post The post which may or may not mention users
     * @return
     */
-  private def extractMentionedUsers(post: Post): List[String] = {
+  private def extractMentionedUsers(post: Post): Set[String] = {
     val postText = post.text
 
     //TODO: Extract using same regex used to highlight usernames
     if (postText.contains('@')) {
       val postWords = postText.split(' ')
-      postWords.filter(_.startsWith("@")).distinct.map(_.tail).toList
-    } else List()
+      postWords.filter(_.startsWith("@")).map(_.tail).toSet
+    } else Set()
   }
 }

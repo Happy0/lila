@@ -145,68 +145,6 @@ case class LichessThread(
   notification: Boolean = false)
 }
 
-package notify {
-
-  import org.joda.time.DateTime
-  import ornicar.scalalib.Random
-
-  case class NewNotification(notification: Notification, unreadNotifications: Int)
-
-  case class Notification(_id: String, notifies: Notification.Notifies, content: NotificationContent, read: Notification.NotificationRead, createdAt: DateTime) {
-    def id = _id
-  }
-
-  object Notification {
-
-    case class Notifies(value: String) extends AnyVal with StringValue
-    case class NotificationRead(value: Boolean)
-
-    def apply(notifies: Notification.Notifies, content: NotificationContent, read: NotificationRead, createdAt: DateTime) : Notification = {
-      val idSize = 8
-      val id = Random nextStringUppercase idSize
-      new Notification(id, notifies, content, read, createdAt)
-    }
-  }
-
-  sealed trait NotificationContent
-  case class MentionedInThread(mentionedBy: MentionedInThread.MentionedBy,
-    topic: MentionedInThread.Topic, category: MentionedInThread.Category) extends NotificationContent
-
-  object MentionedInThread {
-    case class MentionedBy(value: String) extends AnyVal with StringValue
-    case class Topic(value: String) extends  AnyVal with StringValue
-    case class Category(value: String) extends AnyVal with StringValue
-  }
-
-  object NewNotification {
-
-    implicit val notificationWrites: Writes[NewNotification] = new Writes[NewNotification] {
-
-      def writeBody(notificationContent: NotificationContent) = {
-        notificationContent match {
-          case MentionedInThread(mentionedBy, topic, category) =>
-            Json.obj("mentionedBy" -> mentionedBy.value, "topic" -> topic.value, "category" -> category.value)
-        }
-      }
-
-      def writeNotification(notification: Notification): JsValue = {
-        val body = notification.content
-
-        val notificationType = body match {
-          case MentionedInThread(_, _, _) => "mentioned"
-        }
-
-        Json.obj("content" -> writeBody(body), "type" -> notificationType, "date" -> notification.createdAt)
-      }
-
-      def writes(newNotification: NewNotification) = {
-        Json.obj("notification" -> writeNotification(newNotification.notification), "unread" -> newNotification.unreadNotifications)
-      }
-    }
-  }
-
-}
-
 package router {
 case class Abs(route: Any)
 case class Nolang(route: Any)

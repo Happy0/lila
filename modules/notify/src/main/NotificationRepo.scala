@@ -1,7 +1,6 @@
 package lila.notify
 
 import lila.db.dsl._
-import lila.hub.actorApi.notify.Notification
 
 private final class NotificationRepo(val coll: Coll) {
 

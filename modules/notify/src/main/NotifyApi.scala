@@ -4,12 +4,12 @@ import lila.common.paginator.Paginator
 import lila.db.dsl._
 import lila.db.paginator.Adapter
 import lila.hub.actorApi.SendTo
-import lila.hub.actorApi.notify.{NewNotification, Notification}
 import lila.memo.AsyncCache
 
 final class NotifyApi(bus: lila.common.Bus, repo: NotificationRepo) {
 
   import BSONHandlers.NotificationBSONHandler
+  import JSONHandlers._
 
   def getNotifications(userId: Notification.Notifies, page: Int, perPage: Int) : Fu[Paginator[Notification]] = Paginator(
     adapter = new Adapter(

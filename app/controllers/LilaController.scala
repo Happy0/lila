@@ -1,6 +1,6 @@
 package controllers
 
-import lila.hub.actorApi.notify.Notification
+import lila.notify.Notification.Notifies
 import ornicar.scalalib.Zero
 import play.api.data.Form
 import play.api.http._
@@ -10,6 +10,7 @@ import play.api.mvc._, Results._
 import play.api.mvc.WebSocket.FrameFormatter
 import play.twirl.api.Html
 import scalaz.Monoid
+import lila.notify.{Notification}
 
 import lila.api.{ PageData, Context, HeaderContext, BodyContext, TokenBucket }
 import lila.app._
@@ -304,7 +305,7 @@ private[controllers] trait LilaController
             Env.team.api.nbRequests(me.id) zip
             Env.message.api.unreadIds(me.id) zip
             Env.challenge.api.countInFor(me.id) zip
-            Env.notif.notifyApi.getUnseenNotificationCount(lila.hub.actorApi.notify.Notification.Notifies(me.id))
+            Env.notif.notifyApi.getUnseenNotificationCount(Notifies(me.id))
         }
       } map {
         case (pref, ((((friends, teamNbRequests), messageIds), nbChallenges), nbNotifications)) =>

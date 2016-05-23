@@ -1,11 +1,10 @@
 package lila.notify
 
 import lila.db.{dsl, BSON}
-import lila.hub.actorApi.notify.MentionedInThread.{Category, Topic, MentionedBy}
-import lila.hub.actorApi.notify.Notification.{Notifies, NotificationRead}
-import lila.hub.actorApi.notify.{MentionedInThread, Notification, NotificationContent}
 import lila.db.BSON.{ Reader, Writer }
 import lila.db.dsl._
+import lila.notify.MentionedInThread._
+import lila.notify.Notification._
 import reactivemongo.bson.BSONDocument
 
 private object BSONHandlers {
