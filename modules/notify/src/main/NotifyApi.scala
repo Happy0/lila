@@ -5,6 +5,7 @@ import lila.db.dsl._
 import lila.db.paginator.Adapter
 import lila.hub.actorApi.SendTo
 import lila.hub.actorApi.notify.{NewNotification, Notification}
+import lila.memo.AsyncCache
 
 final class NotifyApi(bus: lila.common.Bus, repo: NotificationRepo) {
 
@@ -22,7 +23,7 @@ final class NotifyApi(bus: lila.common.Bus, repo: NotificationRepo) {
 
   def markAllRead(userId: Notification.Notifies) = repo.markAllRead(userId)
 
-  def getUnseenNotificationCount(userId: Notification.Notifies): Fu[Int] = repo.unreadNotificationsCount(userId)
+  def getUnseenNotificationCount = AsyncCache(repo.unreadNotificationsCount, maxCapacity = 20000)
 
   def addNotification(notification: Notification): Funit = {
 
@@ -31,7 +32,6 @@ final class NotifyApi(bus: lila.common.Bus, repo: NotificationRepo) {
       getUnseenNotificationCount(notification.notifies).
         map(NewNotification(notification, _)).
         map(notifyConnectedClients)
-
   }
 
   private def notifyConnectedClients(newNotification: NewNotification) : Unit = {
