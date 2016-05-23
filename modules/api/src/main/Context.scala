@@ -32,6 +32,7 @@ sealed trait Context extends lila.user.UserContextWrapper {
   def teamNbRequests = pageData.teamNbRequests
   def nbMessages = pageData.nbMessages
   def nbChallenges = pageData.nbChallenges
+  def nbNotifications = pageData.nbNotifications
   def pref = pageData.pref
   def blindMode = pageData.blindMode
 
