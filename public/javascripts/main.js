@@ -152,6 +152,10 @@ lichess.challengeApp = (function() {
           }
         }
       },
+      new_notification: function(e) {
+          $('#site_notifications_tag').attr('data-count', e.unread || 0);
+          $.sound.newPM();
+      },
       mlat: function(e) {
         var $t = $('#top .server strong');
         if ($t.is(':visible')) {
