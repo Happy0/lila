@@ -2,9 +2,9 @@ package lila.notify
 
 import play.api.libs.json.{JsValue, Json, Writes}
 
-private object JSONHandlers {
-  implicit val notificationWrites: Writes[NewNotification] = new Writes[NewNotification] {
+object JSONHandlers {
 
+  implicit val notificationWrites : Writes[Notification] = new Writes[Notification] {
     def writeBody(notificationContent: NotificationContent) = {
       notificationContent match {
         case MentionedInThread(mentionedBy, topic, category) =>
@@ -12,18 +12,21 @@ private object JSONHandlers {
       }
     }
 
-    def writeNotification(notification: Notification): JsValue = {
-      val body = notification.content
+    def writes(notification: Notification) = {
+        val body = notification.content
 
-      val notificationType = body match {
-        case MentionedInThread(_, _, _) => "mentioned"
-      }
+        val notificationType = body match {
+          case MentionedInThread(_, _, _) => "mentioned"
+        }
 
-      Json.obj("content" -> writeBody(body), "type" -> notificationType, "date" -> notification.createdAt)
+        Json.obj("content" -> writeBody(body), "type" -> notificationType, "date" -> notification.createdAt)
     }
+  }
+
+  implicit val newNotificationWrites: Writes[NewNotification] = new Writes[NewNotification] {
 
     def writes(newNotification: NewNotification) = {
-      Json.obj("notification" -> writeNotification(newNotification.notification), "unread" -> newNotification.unreadNotifications)
+      Json.obj("notification" -> newNotification.notification, "unread" -> newNotification.unreadNotifications)
     }
   }
 }
