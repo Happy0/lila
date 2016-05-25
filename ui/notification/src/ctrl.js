@@ -4,10 +4,24 @@ module.exports = function(env) {
 
     var data = {};
 
-    this.update = function(data) {
-        this.data = data;
+    this.vm = {
+        initiating: true,
+        reloading: false
+    };
+
+    this.resetNotificationCount = function() {
     }
 
+    this.update = function(data) {
+        console.info("data");
+        console.dir(data);
+
+        this.vm.initiating = false;
+        this.vm.reloading = false;
+        this.data = data;
+
+        env.resetNotificationCount();
+    }
 
     xhr.load().then(this.update);
 };

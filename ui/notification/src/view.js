@@ -6,4 +6,6 @@ module.exports = function(ctrl) {
 
     }
 
+    return
+        m('p', {}, "yoyoyo")
 };

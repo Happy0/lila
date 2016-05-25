@@ -35,6 +35,37 @@ lichess.challengeApp = (function() {
   };
 })();
 
+lichess.siteNotifications = (function() {
+    var instance;
+    var $toggle = $('#site_notifications_tag');
+
+    var load = function() {
+        var isDev = $('body').data('dev');
+
+        lichess.loadScript("/assets/compiled/lichess.notification" + (isDev ? '' : '.min') + '.js').done(function() {
+          var element = document.getElementById('notifications_app');
+          instance = LichessNotification(element, {
+            resetNotificationCount: function() {
+              $toggle.attr('data-count', 0);
+            }
+          });
+        });
+    };
+
+    return {
+        preload: function() {
+            if (!instance) load();
+        },
+        update: function(data) {
+        if (!instance) load(data);
+        else instance.update(data);
+        },
+        open: function() {
+        $toggle.click();
+        }
+    }
+})();
+
 (function() {
 
   /////////////
@@ -766,6 +797,8 @@ lichess.challengeApp = (function() {
       });
       $('#challenge_notifications_tag').one('mouseover click', lichess.challengeApp.preload);
       // $('#challenge_notifications_tag').trigger('click');
+
+      $('#site_notifications_tag').one('mouseover click', lichess.siteNotifications.preload);
 
       $('#translation_call .close').click(function() {
         $.post($(this).data("href"));
