@@ -262,7 +262,7 @@ GET   /challenge/$id<\w{8}>/socket/v:apiVersion controllers.Challenge.websocket(
 POST  /challenge/rematch-of/$id<\w{8}> controllers.Challenge.rematchOf(id: String)
 
 # Notification
-GET /notification                     controllers.Notif.recent
+GET /notif                      controllers.Notif.recent
 
 # Video
 GET   /video                           controllers.Video.index

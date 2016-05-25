@@ -15,7 +15,7 @@ object Notif extends LilaController {
     me =>
       val notifies = Notifies(me.id)
       env.notifyApi.getNotifications(notifies, 1, 10) map {
-        all => Ok(Json.toJson(all.currentPageResults))
+        all => Ok(Json.toJson(all.currentPageResults)) as JSON
       }
   }
 }

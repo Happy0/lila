@@ -13,7 +13,7 @@ module.exports = {
     load: function() {
         return m.request({
             method: 'GET',
-            url: '/notification',
+            url: '/notif',
             config: xhrConfig
 
         });
