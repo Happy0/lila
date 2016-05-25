@@ -19,10 +19,12 @@ module.exports = function(env) {
         this.vm.initiating = false;
         this.vm.reloading = false;
         this.data = data;
+    }.bind(this);
 
-        xhr.
+    this.markAllRead = function () {
+        xhr.markAllRead();
         env.resetNotificationCount();
-    }.bind(this)
+    }.bind(this);
 
     xhr.load().then(this.update);
 };
