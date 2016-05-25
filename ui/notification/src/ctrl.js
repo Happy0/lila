@@ -21,7 +21,7 @@ module.exports = function(env) {
         this.data = data;
 
         env.resetNotificationCount();
-    }
+    }.bind(this)
 
     xhr.load().then(this.update);
 };

@@ -55,13 +55,6 @@ lichess.siteNotifications = (function() {
     return {
         preload: function() {
             if (!instance) load();
-        },
-        update: function(data) {
-        if (!instance) load(data);
-        else instance.update(data);
-        },
-        open: function() {
-        $toggle.click();
         }
     }
 })();
