@@ -20,6 +20,7 @@ module.exports = function(env) {
         this.vm.reloading = false;
         this.data = data;
 
+        xhr.
         env.resetNotificationCount();
     }.bind(this)
 

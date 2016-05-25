@@ -17,5 +17,13 @@ module.exports = {
             config: xhrConfig
 
         });
+    },
+    markAllRead: function() {
+        return m.request({
+            method: 'POST',
+            url: '/notif',
+            config: xhrConfig
+
+        });
     }
 };
