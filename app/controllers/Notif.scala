@@ -18,4 +18,11 @@ object Notif extends LilaController {
         all => Ok(Json.toJson(all.currentPageResults)) as JSON
       }
   }
+
+  def markAllAsRead = Auth {
+    implicit ctx =>
+      me =>
+        val userId = Notifies(me.id)
+        env.notifyApi.markAllRead(userId)
+  }
 }
