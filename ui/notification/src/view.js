@@ -10,5 +10,5 @@ module.exports = function(ctrl) {
 
     console.info("i'm hit");
 
-    return m('div', {style: "width: 100px; height: 100px;"}, "yoyoyo");
+    return m('div', {}, "yoyoyo");
 };
