@@ -9,9 +9,6 @@ module.exports = function(env) {
         reloading: false
     };
 
-    this.resetNotificationCount = function() {
-    }
-
     this.setInitialNotifications = function(data) {
         this.vm.initiating = false;
         this.vm.reloading = false;
@@ -29,6 +26,7 @@ module.exports = function(env) {
         // to see older notifications
         if (this.data.length > env.maxNotifications) this.data.pop();
 
+        m.redraw();
     }.bind(this);
 
     xhr.load().then(this.setInitialNotifications);

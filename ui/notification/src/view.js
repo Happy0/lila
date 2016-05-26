@@ -1,14 +1,23 @@
 var m = require('mithril');
 
-console.info("yoooooyoyoyoyo");
-
 module.exports = function(ctrl) {
 
-    function allNotifications(ctrl, d, nb) {
+    var drawMentionedNotification = function(notification) {
+        var content = notification.content;
 
+        return m('div', {}, 'mentioned');
+    };
+
+    var drawNotification = function (notification) {
+        switch (notification.type) {
+            case "mentioned" : return drawMentionedNotification(notification);
+            default: console.error("unhandled notification");
+        }
+    };
+
+    function recentNotifications(ctrl) {
+        return ctrl.data.map(drawNotification);
     }
 
-    console.info("i'm hit");
-
-    return m('div', {}, "yoyoyo");
+    return m('div', {}, recentNotifications(ctrl));
 };
