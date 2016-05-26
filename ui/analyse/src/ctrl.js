@@ -59,7 +59,7 @@ module.exports = function(opts) {
     flip: false,
     showAutoShapes: util.storedProp('show-auto-shapes', true),
     showGauge: util.storedProp('show-gauge', true),
-    autoScroll: null,
+    autoScrollRequested: false,
     element: opts.element,
     redirecting: false,
     contextMenuPath: null
@@ -115,7 +115,7 @@ module.exports = function(opts) {
     }
     this.vm.cgConfig = config;
     if (!this.chessground)
-      this.chessground = ground.make(this.data, config, userMove, userNewPiece);
+      this.chessground = ground.make(this.data, config, userMove, userNewPiece, !!opts.study);
     this.chessground.set(config);
     onChange();
     if (!dests) getDests();
@@ -148,23 +148,25 @@ module.exports = function(opts) {
   }.bind(this), false) : $.noop;
 
   this.autoScroll = function() {
-    this.vm.autoScroll && this.vm.autoScroll();
+    this.vm.autoScrollRequested = true;
   }.bind(this);
 
   this.jump = function(path) {
-    var tellStudy = this.study && path !== this.vm.path;
+    var pathChanged = path !== this.vm.path;
     this.setPath(path);
     showGround();
-    if (tellStudy) this.study.setPath(path, this.vm.node);
-    if (!this.vm.node.uci) sound.move(); // initial position
-    else if (this.vm.justPlayed !== this.vm.node.uci) {
-      if (this.vm.node.san.indexOf('x') !== -1) sound.capture();
-      else sound.move();
-      this.vm.justPlayed = null;
+    if (pathChanged) {
+      if (this.study) this.study.setPath(path, this.vm.node);
+      if (!this.vm.node.uci) sound.move(); // initial position
+      else if (this.vm.node.uci.indexOf(this.vm.justPlayed) !== 0) {
+        if (this.vm.node.san.indexOf('x') !== -1) sound.capture();
+        else sound.move();
+      }
+      if (/\+|\#/.test(this.vm.node.san)) sound.check();
+      this.ceval.stop();
+      startCeval();
     }
-    if (/\+|\#/.test(this.vm.node.san)) sound.check();
-    this.ceval.stop();
-    startCeval();
+    this.vm.justPlayed = null;
     this.explorer.setNode();
     updateHref();
     this.autoScroll();
@@ -268,7 +270,7 @@ module.exports = function(opts) {
   }.bind(this);
 
   var userMove = function(orig, dest, capture) {
-    this.vm.justPlayed = orig + dest;
+    this.vm.justPlayed = orig;
     sound[capture ? 'capture' : 'move']();
     if (!promotion.start(this, orig, dest, sendMove)) sendMove(orig, dest);
   }.bind(this);

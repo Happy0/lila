@@ -17,7 +17,7 @@ lichess.analyse = {
 data: @Html(J.stringify(data)),
 i18n: @round.jsI18n(),
 userId: @Html(ctx.userId.fold("null")(id => s""""$id"""")),
-canStudy: @isGranted(_.Beta),
+canStudy: true,
 explorer: {
 endpoint: "@explorerEndpoint",
 tablebaseEndpoint: "@tablebaseEndpoint"
@@ -106,7 +106,7 @@ atom = atom.some) {
       }
       }.getOrElse {
       @analysisInProgress.map { prog =>
-      @analyse.computing(pov.gameId, prog.some)
+      @analyse.computing(pov.gameId)
       }.getOrElse {
       <form class="future_game_analysis@if(ctx.isAnon){ must_login}" action="@routes.Analyse.requestAnalysis(gameId)" method="post">
         <button type="submit" class="button text"><span class="is3 text" data-icon="&#xe004;">@trans.requestAComputerAnalysis()</span></button>
