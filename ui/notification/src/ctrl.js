@@ -12,7 +12,7 @@ module.exports = function(env) {
     this.resetNotificationCount = function() {
     }
 
-    this.update = function(data) {
+    this.setInitialNotifications = function(data) {
         console.info("data");
         console.dir(data);
 
@@ -26,5 +26,14 @@ module.exports = function(env) {
         env.resetNotificationCount();
     }.bind(this);
 
-    xhr.load().then(this.update);
+    this.newNotificationReceived = function(newNotification) {
+        data.unshift(newNotification);
+
+        // We only show the most recent notifications - the user should click 'see more' if they want
+        // to see older notifications
+        if (data.length > env.maxNotifications) data.pop();
+
+    }.bind(this);
+
+    xhr.load().then(this.setInitialNotifications);
 };

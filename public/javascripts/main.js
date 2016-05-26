@@ -47,7 +47,8 @@ lichess.siteNotifications = (function() {
           instance = LichessNotification(element, {
             resetNotificationCount: function() {
               $toggle.attr('data-count', 0);
-            }
+            },
+            maxNotifications: 10
           });
         });
     };

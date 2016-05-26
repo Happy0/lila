@@ -13,6 +13,7 @@ module.exports = function(element, opts) {
     });
 
     return {
-        update: controller.update
+        setInitialNotifications: controller.setInitialNotifications,
+        newNotificationReceived: newNotificationReceived
     }
 }
