@@ -2,7 +2,7 @@ var xhr = require('./xhr');
 
 module.exports = function(env) {
 
-    var data = {};
+    this.data = [];
 
     this.vm = {
         initiating: true,
@@ -13,9 +13,6 @@ module.exports = function(env) {
     }
 
     this.setInitialNotifications = function(data) {
-        console.info("data");
-        console.dir(data);
-
         this.vm.initiating = false;
         this.vm.reloading = false;
         this.data = data;
@@ -25,12 +22,12 @@ module.exports = function(env) {
         xhr.markAllRead();
     }.bind(this);
 
-    this.newNotificationReceived = function(newNotification) {
-        data.unshift(newNotification);
+    this.addNewNotification = function(newNotification) {
+        this.data.unshift(newNotification);
 
         // We only show the most recent notifications - the user should click 'see more' if they want
         // to see older notifications
-        if (data.length > env.maxNotifications) data.pop();
+        if (this.data.length > env.maxNotifications) this.data.pop();
 
     }.bind(this);
 
