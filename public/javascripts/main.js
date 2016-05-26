@@ -45,9 +45,6 @@ lichess.siteNotifications = (function() {
         lichess.loadScript("/assets/compiled/lichess.notification" + (isDev ? '' : '.min') + '.js').done(function() {
           var element = document.getElementById('notifications_app');
           instance = LichessNotification(element, {
-            resetNotificationCount: function() {
-              $toggle.attr('data-count', 0);
-            },
             maxNotifications: 10
           });
         });
@@ -56,6 +53,13 @@ lichess.siteNotifications = (function() {
     return {
         preload: function() {
             if (!instance) load();
+
+                $toggle.on('click', function() {
+                    if (parseInt($toggle.attr('data-count'))) {
+                        instance.markAllReadServer();
+                        $toggle.attr('data-count', 0);
+                    }
+            });
         }
     }
 })();

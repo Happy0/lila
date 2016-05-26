@@ -14,6 +14,7 @@ module.exports = function(element, opts) {
 
     return {
         setInitialNotifications: controller.setInitialNotifications,
-        newNotificationReceived: controller.newNotificationReceived
+        newNotificationReceived: controller.newNotificationReceived,
+        markAllReadServer: controller.markAllReadServer
     }
 }

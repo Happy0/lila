@@ -21,9 +21,8 @@ module.exports = function(env) {
         this.data = data;
     }.bind(this);
 
-    this.markAllRead = function () {
+    this.markAllReadServer = function () {
         xhr.markAllRead();
-        env.resetNotificationCount();
     }.bind(this);
 
     this.newNotificationReceived = function(newNotification) {
