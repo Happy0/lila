@@ -13,15 +13,15 @@ private object BSONHandlers {
 
     private def writeNotificationType(notificationContent: NotificationContent) = {
       notificationContent match {
-        case MentionedInThread(mentionedBy, topic, category) => "mention"
+        case MentionedInThread(_y, _, _, _) => "mention"
       }
     }
 
     private def writeNotificationContent(notificationContent: NotificationContent) = {
       notificationContent match {
-        case MentionedInThread(mentionedBy, topic, category) =>
+        case MentionedInThread(mentionedBy, topic, category, postNumber) =>
           $doc("type" -> writeNotificationType(notificationContent), "mentionedBy" -> mentionedBy.value,
-            "topic" -> topic.value, "category" -> category.value)
+            "topic" -> topic.value, "category" -> category.value, "postNumber" -> postNumber.value)
       }
     }
 
@@ -29,8 +29,9 @@ private object BSONHandlers {
       val mentionedBy = MentionedBy(reader.str("mentionedBy"))
       val topic = Topic(reader.str("topic"))
       val category = Category(reader.str("category"))
+      val postNumber = PostNumber(reader.int("postNumber"))
 
-      MentionedInThread(mentionedBy, topic, category)
+      MentionedInThread(mentionedBy, topic, category, postNumber)
     }
 
     override def reads(reader: Reader): NotificationContent = {

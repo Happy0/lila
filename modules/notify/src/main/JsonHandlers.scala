@@ -7,8 +7,8 @@ object JSONHandlers {
   implicit val notificationWrites : Writes[Notification] = new Writes[Notification] {
     def writeBody(notificationContent: NotificationContent) = {
       notificationContent match {
-        case MentionedInThread(mentionedBy, topic, category) =>
-          Json.obj("mentionedBy" -> mentionedBy.value, "topic" -> topic.value, "category" -> category.value)
+        case MentionedInThread(mentionedBy, topic, category, postNumber) =>
+          Json.obj("mentionedBy" -> mentionedBy.value, "topic" -> topic.value, "category" -> category.value, "postNumber" -> postNumber.value)
       }
     }
 
@@ -16,7 +16,7 @@ object JSONHandlers {
         val body = notification.content
 
         val notificationType = body match {
-          case MentionedInThread(_, _, _) => "mentioned"
+          case MentionedInThread(_, _, _, _) => "mentioned"
         }
 
         Json.obj("content" -> writeBody(body), "type" -> notificationType, "date" -> notification.createdAt)

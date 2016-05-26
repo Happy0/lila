@@ -1,5 +1,6 @@
 package lila.notify
 
+import lila.notify.MentionedInThread.PostNumber
 import org.joda.time.DateTime
 import ornicar.scalalib.Random
 
@@ -23,10 +24,13 @@ object Notification {
 
 sealed trait NotificationContent
 case class MentionedInThread(mentionedBy: MentionedInThread.MentionedBy,
-                             topic: MentionedInThread.Topic, category: MentionedInThread.Category) extends NotificationContent
+                             topic: MentionedInThread.Topic,
+                             category: MentionedInThread.Category,
+                             postNumber: PostNumber) extends NotificationContent
 
 object MentionedInThread {
   case class MentionedBy(value: String) extends AnyVal with StringValue
   case class Topic(value: String) extends  AnyVal with StringValue
   case class Category(value: String) extends AnyVal with StringValue
+  case class PostNumber(value: Int) extends AnyVal
 }

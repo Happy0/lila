@@ -4,15 +4,14 @@ module.exports = function(ctrl) {
 
     var drawMentionedNotification = function(notification) {
 
-
-
         var content = notification.content;
         var category = content.category;
         var topic = content.topic;
         var mentionedBy = content.mentionedBy;
+        var postNumber = content.postNumber;
 
         var mentionedByProfile = location.origin + "/@/" + mentionedBy;
-        var postUrl = location.origin + "/forum/" + category + "/" + topic;
+        var postUrl = location.origin + "/forum/" + category + "/" + topic + "#" + postNumber;
 
         console.dir(content);
 
