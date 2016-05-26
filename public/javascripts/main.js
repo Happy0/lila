@@ -52,14 +52,16 @@ lichess.siteNotifications = (function() {
 
     return {
         preload: function() {
-            if (!instance) load();
-
+            if (!instance) {
+                load();
+                
                 $toggle.on('click', function() {
                     if (parseInt($toggle.attr('data-count'))) {
                         instance.markAllReadServer();
                         $toggle.attr('data-count', 0);
                     }
-            });
+                });
+            }
         }
     }
 })();
