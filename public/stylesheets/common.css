@@ -880,6 +880,11 @@ body.offline #reconnecting,
 #top .shown #challenge_notifications_tag.toggle {
   height: 29px;
 }
+
+#top .shown #site_notifications_tag.toggle {
+    height: 29px;
+}
+
 #ham-plate {
   cursor: pointer;
 }
@@ -1160,6 +1165,7 @@ body.fpmenu #fpmenu {
 }
 #top div.message_notifications.shown .links,
 #top div.challenge_notifications.shown .links,
+#top div.site_notifications.shown .links,
 #top div.auth.shown .links {
   display: block;
 }
