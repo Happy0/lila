@@ -53,6 +53,13 @@ object ForumTopic extends LilaController with ForumController {
     }
   }
 
+  def showByPostNumber(categSlug: String, slug: String, postNumber: Int) = {
+    val postsPerPage = postApi.maxPerPage : Int
+    val page = postNumber / postsPerPage
+
+    show(categSlug, slug, page)
+  }
+
   def close(categSlug: String, slug: String) = Auth { implicit ctx =>
     me =>
       CategGrantMod(categSlug) {
