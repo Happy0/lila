@@ -13,22 +13,24 @@ module.exports = function(ctrl) {
         var mentionedByProfile = location.origin + "/@/" + mentionedBy;
         var postUrl = location.origin + "/forum/redirect/post/" + postId;
 
-        console.dir(content);
-
-        return m('div', {}, [
-                m('span', {}, 'You were mentioned by '),
+        return m('div', [
                 m('a', {href: mentionedByProfile}, mentionedBy),
-                m('span', {}, ' in a '),
-                m('a', {href: postUrl},'forum thread.')
+                m('span', ' mentioned you in the '),
+                m('a', {href: postUrl, class: "forum_post_link"}, "[" + topic + "]"),
+                m('span', ' thread')
             ]
         );
     };
 
     var drawNotification = function (notification) {
+        var content = null;
         switch (notification.type) {
-            case "mentioned" : return drawMentionedNotification(notification);
+            case "mentioned" : content =  drawMentionedNotification(notification); break;
             default: console.error("unhandled notification");
         }
+
+        console.dir(notification);
+        return m('div', {class: 'site_notification'}, content);
     };
 
     function recentNotifications(ctrl) {

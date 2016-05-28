@@ -1,6 +1,5 @@
 package lila.forum
 
-import lila.common.Future
 import lila.notify.{Notification, MentionedInThread}
 import lila.notify.NotifyApi
 import lila.user.{UserRepo, User}

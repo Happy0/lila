@@ -1,13 +1,38 @@
 package lila.notify
 
 import lila.db.{dsl, BSON}
-import lila.db.BSON.{ Reader, Writer }
+import lila.db.BSON.{Reader, Writer}
 import lila.db.dsl._
 import lila.notify.MentionedInThread._
 import lila.notify.Notification._
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONString, BSONHandler, BSONDocument}
 
 private object BSONHandlers {
+
+  implicit val MentionByHandler = new BSONHandler[BSONString, MentionedBy] {
+    override def read(bson: BSONString): MentionedBy = MentionedBy(bson.value)
+
+    override def write(t: MentionedBy): BSONString = BSONString(t.value)
+  }
+
+  implicit val TopicHandler = new BSONHandler[BSONString, Topic] {
+    override def read(bson: BSONString): Topic = Topic(bson.value)
+
+    override def write(t: Topic): BSONString = BSONString(t.value)
+  }
+
+  implicit val CategoryHandler = new BSONHandler[BSONString, Category] {
+    override def read(bson: BSONString): Category = Category(bson.value)
+
+    override def write(t: Category): BSONString = BSONString(t.value)
+  }
+
+  implicit val PostIdHandler = new BSONHandler[BSONString, PostId] {
+
+    override def read(bson: BSONString): PostId = PostId(bson.value)
+
+    override def write(t: PostId): BSONString = BSONString(t.value)
+  }
 
   implicit val NotificationContentHandler = new BSON[NotificationContent] {
 
@@ -20,16 +45,16 @@ private object BSONHandlers {
     private def writeNotificationContent(notificationContent: NotificationContent) = {
       notificationContent match {
         case MentionedInThread(mentionedBy, topic, category, postId) =>
-          $doc("type" -> writeNotificationType(notificationContent), "mentionedBy" -> mentionedBy.value,
-            "topic" -> topic.value, "category" -> category.value, "postId" -> postId.value)
+          $doc("type" -> writeNotificationType(notificationContent), "mentionedBy" -> mentionedBy,
+            "topic" -> topic, "category" -> category, "postId" -> postId)
       }
     }
 
-    private def readMentionedNotification(reader: Reader) : MentionedInThread = {
-      val mentionedBy = MentionedBy(reader.str("mentionedBy"))
-      val topic = Topic(reader.str("topic"))
-      val category = Category(reader.str("category"))
-      val postNumber = PostId(reader.str("postId"))
+    private def readMentionedNotification(reader: Reader): MentionedInThread = {
+      val mentionedBy = reader.get[MentionedBy]("mentionedBy")
+      val topic = reader.get[Topic]("topic")
+      val category = reader.get[Category]("category")
+      val postNumber = reader.get[PostId]("postId")
 
       MentionedInThread(mentionedBy, topic, category, postNumber)
     }
