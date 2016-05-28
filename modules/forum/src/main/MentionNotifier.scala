@@ -3,6 +3,7 @@ package lila.forum
 import lila.common.Future
 import lila.notify.{Notification, MentionedInThread}
 import lila.notify.NotifyApi
+import lila.user.User
 import org.joda.time.DateTime
 
 /**
@@ -55,12 +56,6 @@ final class MentionNotifier(notifyApi: NotifyApi) {
     * @return
     */
   private def extractMentionedUsers(post: Post): Set[String] = {
-    val postText = post.text
-
-    //TODO: Extract using same regex used to highlight usernames
-    if (postText.contains('@')) {
-      val postWords = postText.split(' ')
-      postWords.filter(_.startsWith("@")).map(_.tail).toSet
-    } else Set()
+    User.atUsernameRegex.findAllMatchIn(post.text).map(_.matched.tail).toSet
   }
 }
