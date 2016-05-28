@@ -24,7 +24,6 @@ var m = require('mithril');
 module.exports = function(opts) {
 
   this.userId = opts.userId;
-  this.canStudy = opts.canStudy;
 
   var initialize = function(data) {
     this.data = data;
@@ -171,6 +170,7 @@ module.exports = function(opts) {
     updateHref();
     this.autoScroll();
     promotion.cancel(this);
+    if (this.music) this.music.jump(this.vm.node);
   }.bind(this);
 
   this.canJumpTo = function(path) {
@@ -449,7 +449,7 @@ module.exports = function(opts) {
         role: sanToRole[uci[0]]
       },
       move[1])
-    else if (!move[2]) this.chessground.apiMove(move[0], move[1])
+    else if (!move[2]) sendMove(move[0], move[1])
     else sendMove(move[0], move[1], sanToRole[move[2].toUpperCase()]);
     this.explorer.loading(true);
   }.bind(this);
@@ -465,4 +465,12 @@ module.exports = function(opts) {
   startCeval();
   this.explorer.setNode();
   this.study = opts.study ? studyCtrl.init(opts.study, opts.chat, this) : null;
+
+  var startMusic = function() {
+    if (!this.music) lichess.loadScript('/assets/javascripts/music/replay.js').then(function() {
+      this.music = lichessReplayMusic();
+    }.bind(this));
+  }.bind(this);
+  Mousetrap.bind(': m u s i c', startMusic);
+  if (location.hash === '#music') startMusic();
 };

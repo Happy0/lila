@@ -732,7 +732,7 @@ lichess.siteNotifications = (function() {
 
       var manuallySetZoom = $.fp.debounce(setZoom, 10);
       if (getZoom() > 1) setZoom(getZoom()); // Instantiate the page's zoom
-      $('body').on('lichess.coordinate_trainer_loaded', function() {
+      $('body').on('lichess.reset_zoom', function() {
         setZoom(getZoom());
       });
 
@@ -929,7 +929,11 @@ lichess.siteNotifications = (function() {
         if (enabled()) collection(s).play();
       };
     }
-    var play = {};
+    var play = {
+      disable: function() {
+        soundSet = 'silent';
+      }
+    };
     Object.keys(names).forEach(function(name) {
       play[name] = function() {
         if (enabled()) collection(name).play();

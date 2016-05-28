@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringEscapeUtils.escapeHtml4
 
 import chess.format.pgn.{ Glyphs, Glyph }
 import chess.format.{ Forsyth, FEN }
-import lila.chat.actorApi.SystemTalk
 import lila.hub.actorApi.map.Tell
 import lila.hub.Sequencer
 import lila.socket.Socket.Uid
@@ -153,6 +152,7 @@ final class StudyApi(
         _ ?? { chapter =>
           chapter.setShapes(shapes, position.path) match {
             case Some(newChapter) =>
+              studyRepo.updateNow(study)
               chapterRepo.update(newChapter) >>-
                 sendTo(study, Socket.SetShapes(position, shapes, uid))
             case None => fufail(s"Invalid setShapes $position $shapes") >>- reloadUid(study, uid)
@@ -172,6 +172,7 @@ final class StudyApi(
             by = Comment.Author.User(author.id, author.titleName))
           chapter.setComment(comment, position.path) match {
             case Some(newChapter) =>
+              studyRepo.updateNow(study)
               newChapter.root.nodeAt(position.path).flatMap(_.comments findBy comment.by) ?? { c =>
                 chapterRepo.update(newChapter) >>-
                   sendTo(study, Socket.SetComment(position, c, uid))
@@ -201,6 +202,7 @@ final class StudyApi(
       (study.members get userId) ?? { byMember =>
         chapter.toggleGlyph(glyph, position.path) match {
           case Some(newChapter) =>
+            studyRepo.updateNow(study)
             chapterRepo.update(newChapter) >>-
               newChapter.root.nodeAt(position.path).foreach { node =>
                 sendTo(study, Socket.SetGlyphs(position, node.glyphs, uid))
@@ -221,7 +223,8 @@ final class StudyApi(
                 _.filter(_.isEmptyInitial) ?? chapterRepo.delete
               }
             } >> chapterRepo.insert(chapter) >>
-              doSetChapter(byUserId, study, chapter.id, socket, uid)
+              doSetChapter(byUserId, study, chapter.id, socket, uid) >>-
+              studyRepo.updateNow(study)
           }
         }
       }
@@ -236,10 +239,8 @@ final class StudyApi(
     (study.canContribute(byUserId) && study.position.chapterId != chapterId) ?? {
       chapterRepo.byIdAndStudy(chapterId, study.id) flatMap {
         _ ?? { chapter =>
-          studyRepo.updateSomeFields(study withChapter chapter) >>- {
+          studyRepo.updateSomeFields(study withChapter chapter) >>-
             sendTo(study, Socket.ChangeChapter(uid))
-            chat ! SystemTalk(study.id, escapeHtml4(chapter.name), socket)
-          }
         }
       }
     }
@@ -267,8 +268,6 @@ final class StudyApi(
             }
             else fuccess {
               reloadChapters(study)
-              if (chapter.name != newChapter.name)
-                chat ! SystemTalk(study.id, escapeHtml4(name), socket)
             }
           }
         }

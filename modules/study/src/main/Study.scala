@@ -50,6 +50,7 @@ object Study {
 
   case class Likes(value: Int) extends AnyVal
   case class Liking(likes: Likes, me: Boolean)
+  val emptyLiking = Liking(Likes(0), false)
 
   sealed trait From
   object From {
@@ -74,6 +75,8 @@ object Study {
 
   case class WithChapters(study: Study, chapters: Seq[String])
 
+  case class WithChaptersAndLiked(study: Study, chapters: Seq[String], liked: Boolean)
+
   type ID = String
 
   val idSize = 8
@@ -92,7 +95,7 @@ object Study {
       visibility = Visibility.Public,
       settings = Settings.init,
       from = from,
-      likes = Likes(0),
+      likes = Likes(1),
       createdAt = DateTime.now)
   }
 }

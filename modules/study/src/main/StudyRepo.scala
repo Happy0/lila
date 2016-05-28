@@ -31,7 +31,6 @@ final class StudyRepo(private[study] val coll: Coll) {
   def insert(s: Study): Funit = coll.insert {
     StudyBSONHandler.write(s) ++ $doc(
       "uids" -> s.members.ids,
-      "likes" -> 1,
       "likers" -> List(s.ownerId)
     )
   }.void
@@ -40,7 +39,8 @@ final class StudyRepo(private[study] val coll: Coll) {
     "position" -> s.position,
     "name" -> s.name,
     "settings" -> s.settings,
-    "visibility" -> s.visibility
+    "visibility" -> s.visibility,
+    "updatedAt" -> DateTime.now
   )).void
 
   def delete(s: Study): Funit = coll.remove($id(s.id)).void
@@ -49,10 +49,17 @@ final class StudyRepo(private[study] val coll: Coll) {
     coll.primitiveOne[StudyMembers]($id(id), "members")
 
   def setPosition(studyId: Study.ID, position: Position.Ref): Funit =
-    coll.update($id(studyId), $set("position" -> position)).void
+    coll.update(
+      $id(studyId),
+      $set(
+        "position" -> position,
+        "updatedAt" -> DateTime.now)
+    ).void
 
-  def incViews(study: Study) =
-    coll.incFieldUnchecked($id(study.id), "views")
+  def incViews(study: Study) = coll.incFieldUnchecked($id(study.id), "views")
+
+  def updateNow(s: Study) =
+    coll.updateFieldUnchecked($id(s.id), "updatedAt", DateTime.now)
 
   def addMember(study: Study, member: StudyMember): Funit =
     coll.update(
@@ -82,6 +89,9 @@ final class StudyRepo(private[study] val coll: Coll) {
 
   def liked(study: Study, user: User): Fu[Boolean] =
     coll.exists($id(study.id) ++ selectLiker(user.id))
+
+  def filterLiked(user: User, studyIds: Seq[Study.ID]): Fu[Set[Study.ID]] =
+    coll.primitive[Study.ID]($inIds(studyIds) ++ selectLiker(user.id), "_id").map(_.toSet)
 
   private def doLike(studyId: Study.ID, userId: User.ID, v: Boolean): Funit =
     coll.update(

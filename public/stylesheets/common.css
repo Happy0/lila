@@ -1687,7 +1687,7 @@ a.button,
 }
 .button.frameless {
   border: 0;
-  background: transparent;
+  background: none;
 }
 .button:hover,
 a.button:hover,
