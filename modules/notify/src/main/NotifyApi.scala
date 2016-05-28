@@ -34,6 +34,10 @@ final class NotifyApi(bus: lila.common.Bus, repo: NotificationRepo) {
         map(notifyConnectedClients)
   }
 
+  def addNotifications(notification: List[Notification]) : Unit = {
+    notification.foreach(addNotification)
+  }
+
   private def notifyConnectedClients(newNotification: NewNotification) : Unit = {
     val notificationsEventKey = "new_notification"
     val notificationEvent = SendTo(newNotification.notification.notifies.value, notificationsEventKey, newNotification)
