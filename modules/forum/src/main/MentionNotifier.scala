@@ -13,12 +13,6 @@ import org.joda.time.DateTime
   */
 final class MentionNotifier(notifyApi: NotifyApi) {
 
-  /**
-    * Notify any users mentioned in a post that they have been mentioned
-    *
-    * @param post The post which may or may not mention users
-    * @return
-    */
   def notifyMentionedUsers(post: Post, topic: Topic): Unit = {
     post.userId foreach { author =>
       val mentionedUsers = extractMentionedUsers(post)
@@ -32,26 +26,16 @@ final class MentionNotifier(notifyApi: NotifyApi) {
   }
 
   /**
-    * Checks the database for valid users, and removes any users that are not valid
-    * @param users
-    * @return
+    * Checks the database to make sure that the users mentioned exist, and removes any users that do not exist
+    * from the returned list.
     */
   private def filterValidUsers(users: Set[String]) : Fu[List[Notification.Notifies]] = {
     for {
       validUsers <- UserRepo.byIds(users)
-      validNotifies = validUsers.map(Notification.Notifies(_.username))
+      validNotifies = validUsers.map(u => Notification.Notifies(u.username))
     } yield validNotifies
   }
 
-  /**
-    * Inform user that they have been mentioned by another user
-    *
-    * @param post          The post that mentions the user
-    * @param topic         The topic of the post that mentions the user
-    * @param mentionedUser The user that was mentioned
-    * @param mentionedBy   The user that mentioned the user
-    * @return
-    */
   def createMentionNotification(post: Post, topic: Topic, mentionedUser: Notification.Notifies, mentionedBy: MentionedInThread.MentionedBy): Notification = {
     val notificationContent = MentionedInThread(
         mentionedBy,
@@ -62,12 +46,6 @@ final class MentionNotifier(notifyApi: NotifyApi) {
     Notification(mentionedUser, notificationContent, Notification.NotificationRead(false), DateTime.now)
   }
 
-  /**
-    * Pull out any users mentioned in a post
-    *
-    * @param post The post which may or may not mention users
-    * @return
-    */
   private def extractMentionedUsers(post: Post): Set[String] = {
     User.atUsernameRegex.findAllMatchIn(post.text).map(_.matched.tail).toSet
   }
