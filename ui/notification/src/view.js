@@ -1,7 +1,5 @@
 var m = require('mithril');
 
-module.exports = function(ctrl) {
-
     var drawMentionedNotification = function(notification) {
 
         var content = notification.content;
@@ -36,6 +34,10 @@ module.exports = function(ctrl) {
     function recentNotifications(ctrl) {
         return ctrl.data.map(drawNotification);
     }
+
+module.exports = function(ctrl) {
+
+    if (ctrl.vm.initiating) return m('div.initiating', m.trust(lichess.spinnerHtml));
 
     return m('div', {class: "site_notifications_box"}, recentNotifications(ctrl));
 };
