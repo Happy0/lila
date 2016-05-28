@@ -15,7 +15,7 @@ import lila.user.{ User, UserContext }
 final class PostApi(
     env: Env,
     indexer: ActorSelection,
-    val maxPerPage: Int,
+    maxPerPage: Int,
     modLog: ModlogApi,
     shutup: ActorSelection,
     timeline: ActorSelection,
