@@ -26,7 +26,7 @@ final class MentionNotifier(notifyApi: NotifyApi) {
 
       for {
         validUsers <- filterValidUsers(mentionedUsers)
-        notifications = validUsers.map(mentioned => createMentionNotification(post, topic, mentioned, mentionedBy))
+        notifications = validUsers.map(createMentionNotification(post, topic, _, mentionedBy))
       } yield notifyApi.addNotifications(notifications)
     }
   }
@@ -39,8 +39,8 @@ final class MentionNotifier(notifyApi: NotifyApi) {
   private def filterValidUsers(users: Set[String]) : Fu[List[Notification.Notifies]] = {
     for {
       validUsers <- UserRepo.byIds(users)
-      validNotifies = validUsers.map(user => Notification.Notifies(user.username))
-    } yield validNotifies.pp
+      validNotifies = validUsers.map(Notification.Notifies(_.username))
+    } yield validNotifies
   }
 
   /**
