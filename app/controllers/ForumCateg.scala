@@ -20,7 +20,4 @@ object ForumCateg extends LilaController with ForumController {
       }
     }
   }
-
-  def showByPostNumber()
-
 }

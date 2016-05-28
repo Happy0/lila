@@ -8,10 +8,10 @@ module.exports = function(ctrl) {
         var category = content.category;
         var topic = content.topic;
         var mentionedBy = content.mentionedBy;
-        var postNumber = content.postNumber;
+        var postId = content.postId;
 
         var mentionedByProfile = location.origin + "/@/" + mentionedBy;
-        var postUrl = location.origin + "/forum/" + category + "/" + topic + "#" + postNumber;
+        var postUrl = location.origin + "/forum/redirect/post/" + postId;
 
         console.dir(content);
 
