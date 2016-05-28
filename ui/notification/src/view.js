@@ -16,8 +16,8 @@ module.exports = function(ctrl) {
         return m('div', [
                 m('a', {href: mentionedByProfile}, mentionedBy),
                 m('span', ' mentioned you in the '),
-                m('a', {href: postUrl, class: "forum_post_link"}, "[" + topic + "]"),
-                m('span', ' thread')
+                m('a', {href: postUrl, class: "forum_post_link"}, topic),
+                m('span', ' forum thread')
             ]
         );
     };
