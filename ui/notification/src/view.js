@@ -5,11 +5,11 @@ var m = require('mithril');
         var content = notification.content;
         var category = content.category;
         var topic = content.topic;
-        var mentionedBy = content.mentionedBy;
+        var mentionedBy = content.mentionedBy.name;
         var postId = content.postId;
 
         var mentionedByProfile = location.origin + "/@/" + mentionedBy;
-        var postUrl = location.origin + "/forum/redirect/post/" + postId;
+        var postUrl = "/forum/redirect/post/" + postId;
 
         return m('div', [
                 m('a', {href: mentionedByProfile}, mentionedBy),

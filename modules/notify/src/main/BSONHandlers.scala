@@ -9,30 +9,13 @@ import reactivemongo.bson.{BSONString, BSONHandler, BSONDocument}
 
 private object BSONHandlers {
 
-  implicit val MentionByHandler = new BSONHandler[BSONString, MentionedBy] {
-    override def read(bson: BSONString): MentionedBy = MentionedBy(bson.value)
+  implicit val MentionByHandler = stringAnyValHandler[MentionedBy](_.value, MentionedBy.apply)
 
-    override def write(t: MentionedBy): BSONString = BSONString(t.value)
-  }
+  implicit val TopicHandler = stringAnyValHandler[Topic](_.value, Topic.apply)
 
-  implicit val TopicHandler = new BSONHandler[BSONString, Topic] {
-    override def read(bson: BSONString): Topic = Topic(bson.value)
+  implicit val CategoryHandler = stringAnyValHandler[Category](_.value, Category.apply)
 
-    override def write(t: Topic): BSONString = BSONString(t.value)
-  }
-
-  implicit val CategoryHandler = new BSONHandler[BSONString, Category] {
-    override def read(bson: BSONString): Category = Category(bson.value)
-
-    override def write(t: Category): BSONString = BSONString(t.value)
-  }
-
-  implicit val PostIdHandler = new BSONHandler[BSONString, PostId] {
-
-    override def read(bson: BSONString): PostId = PostId(bson.value)
-
-    override def write(t: PostId): BSONString = BSONString(t.value)
-  }
+  implicit val PostIdHandler = stringAnyValHandler[PostId](_.value, PostId.apply)
 
   implicit val NotificationContentHandler = new BSON[NotificationContent] {
 

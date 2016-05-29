@@ -1,6 +1,9 @@
 package lila.notify
 
 import play.api.libs.json.{JsValue, Json, Writes}
+import lila.common.LightUser
+import lila.user.User
+
 
 object JSONHandlers {
 
@@ -8,7 +11,7 @@ object JSONHandlers {
     def writeBody(notificationContent: NotificationContent) = {
       notificationContent match {
         case MentionedInThread(mentionedBy, topic, category, postId) =>
-          Json.obj("mentionedBy" -> mentionedBy.value, "topic" -> topic.value, "category" -> category.value, "postId" -> postId.value)
+          Json.obj("mentionedBy" -> lila.user.Env.current.lightUser(mentionedBy.value), "topic" -> topic.value, "category" -> category.value, "postId" -> postId.value)
       }
     }
 

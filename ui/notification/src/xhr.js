@@ -13,7 +13,7 @@ module.exports = {
     load: function() {
         return m.request({
             method: 'GET',
-            url: '/notif',
+            url: uncache('/notif'),
             config: xhrConfig
 
         });
