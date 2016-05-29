@@ -62,8 +62,6 @@ lichess.StrongSocket = function(url, version, settings) {
       };
       ws.onmessage = function(e) {
         var m = JSON.parse(e.data);
-        console.info(m);
-
         // if (Math.random() > 0.5) {
         //   console.log(m, 'skip');
         //   return;
