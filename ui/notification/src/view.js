@@ -47,7 +47,13 @@ var m = require('mithril');
         }
 
         console.dir(notification);
-        return m('div', {class: 'site_notification'}, content);
+
+        var date = new Date(notification.date);
+
+        return m('div', {class: 'site_notification'}, [
+            content,
+            m('span', date.toLocaleString())
+        ]);
     };
 
     function recentNotifications(ctrl) {
