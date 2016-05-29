@@ -35,7 +35,7 @@ final class MentionNotifier(notifyApi: NotifyApi) {
     } yield validNotifies
   }
 
-  def createMentionNotification(post: Post, topic: Topic, mentionedUser: Notification.Notifies, mentionedBy: MentionedInThread.MentionedBy): Notification = {
+  private def createMentionNotification(post: Post, topic: Topic, mentionedUser: Notification.Notifies, mentionedBy: MentionedInThread.MentionedBy): Notification = {
     val notificationContent = MentionedInThread(
         mentionedBy,
         MentionedInThread.Topic(topic.name),

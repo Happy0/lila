@@ -25,13 +25,13 @@ final class NotifyApi(bus: lila.common.Bus, repo: NotificationRepo) {
 
   def getUnseenNotificationCount = AsyncCache(repo.unreadNotificationsCount, maxCapacity = 20000)
 
-  def addNotification(notification: Notification): Funit = {
+  def addNotification(notification: Notification): Unit = {
 
     // Add to database and then notify any connected clients of the new notification
-    repo.insert(notification) >>
+    repo.insert(notification) >>-
       getUnseenNotificationCount(notification.notifies).
         map(NewNotification(notification, _)).
-        map(notifyConnectedClients)
+        foreach(notifyConnectedClients)
   }
 
   def addNotifications(notification: List[Notification]) : Unit = {
