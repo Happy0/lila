@@ -34,3 +34,13 @@ object MentionedInThread {
   case class Category(value: String) extends AnyVal with StringValue
   case class PostId(value: String) extends AnyVal with StringValue
 }
+
+case class InvitedToStudy(invitedBy: InvitedToStudy.InvitedBy,
+                          studyName: InvitedToStudy.StudyName,
+                          studyId: InvitedToStudy.StudyId) extends NotificationContent
+
+object InvitedToStudy {
+  case class InvitedBy(value: String) extends AnyVal with StringValue
+  case class StudyName(value: String) extends AnyVal with StringValue
+  case class StudyId(value: String) extends  AnyVal with StringValue
+}

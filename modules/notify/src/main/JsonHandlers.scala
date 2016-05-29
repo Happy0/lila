@@ -11,7 +11,13 @@ object JSONHandlers {
     def writeBody(notificationContent: NotificationContent) = {
       notificationContent match {
         case MentionedInThread(mentionedBy, topic, category, postId) =>
-          Json.obj("mentionedBy" -> lila.user.Env.current.lightUser(mentionedBy.value), "topic" -> topic.value, "category" -> category.value, "postId" -> postId.value)
+          Json.obj("mentionedBy" -> lila.user.Env.current.lightUser(mentionedBy.value),
+            "topic" -> topic.value, "category" -> category.value,
+            "postId" -> postId.value)
+        case InvitedToStudy(invitedBy, studyName, studyId) =>
+          Json.obj("invitedBy" -> lila.user.Env.current.lightUser(invitedBy.value),
+            "studyName" -> studyName.value,
+            "studyId" -> studyId.value)
       }
     }
 
@@ -20,6 +26,7 @@ object JSONHandlers {
 
         val notificationType = body match {
           case MentionedInThread(_, _, _, _) => "mentioned"
+          case InvitedToStudy(_,_,_) => "invitedStudy"
         }
 
         Json.obj("content" -> writeBody(body), "type" -> notificationType, "date" -> notification.createdAt)
