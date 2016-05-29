@@ -24,7 +24,7 @@ var m = require('mithril');
         var content = null;
         switch (notification.type) {
             case "mentioned" : content =  drawMentionedNotification(notification); break;
-            default: console.error("unhandled notification");
+            default: console.dir(notification); console.error("unhandled notification"); break;
         }
 
         console.dir(notification);
