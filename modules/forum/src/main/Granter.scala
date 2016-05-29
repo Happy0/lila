@@ -12,9 +12,23 @@ trait Granter {
   protected def userBelongsToTeam(teamId: String, userId: String): Boolean
   protected def userOwnsTeam(teamId: String, userId: String): Fu[Boolean]
 
-  def isGrantedRead(categSlug: String)(implicit ctx: UserContext): Boolean = true
+  def isGrantedRead(categSlug: String)(implicit ctx: UserContext): Boolean =
+    (categSlug == StaffSlug).fold(
+      ctx.me exists Master(Permission.StaffForum),
+      true)
 
-  def isGrantedWrite(categSlug: String)(implicit ctx: UserContext): Boolean = true
+  def isGrantedWrite(categSlug: String)(implicit ctx: UserContext): Boolean =
+    isOldEnoughToForum && {
+      ctx.me ?? { me =>
+        Master(Permission.StaffForum)(me) || {
+          categSlug match {
+            case StaffSlug               => false
+            case TeamSlugPattern(teamId) => userBelongsToTeam(teamId, me.id)
+            case _                       => true
+          }
+        }
+      }
+    }
 
   def isOldEnoughToForum(implicit ctx: UserContext) =
     ctx.me ?? { u => u.count.game > 0 && (u.createdAt isBefore DateTime.now.minusDays(2)) }
