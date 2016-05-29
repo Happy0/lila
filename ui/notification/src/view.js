@@ -8,7 +8,7 @@ var m = require('mithril');
         var mentionedBy = content.mentionedBy.name;
         var postId = content.postId;
 
-        var mentionedByProfile = location.origin + "/@/" + mentionedBy;
+        var mentionedByProfile = "/@/" + mentionedBy;
         var postUrl = "/forum/redirect/post/" + postId;
 
         return m('div', [
@@ -20,10 +20,29 @@ var m = require('mithril');
         );
     };
 
+    var drawStudyInviteNotification = function(notification) {
+        var content = notification.content;
+        var invitedBy = content.invitedBy.name;
+        var studyName = content.studyName;
+        var studyId = content.studyId;
+
+        var invitedByProfile = "/@/" + invitedBy;
+        var studyUrl = "/study/" + studyId;
+
+        return m('div', [
+            m('a', {href: invitedByProfile}, invitedBy),
+            m('span', " invited you to their "),
+            m('a', {href: studyUrl}, studyName),
+            m('span', " study")
+          ]
+        );
+    }
+
     var drawNotification = function (notification) {
         var content = null;
         switch (notification.type) {
             case "mentioned" : content =  drawMentionedNotification(notification); break;
+            case "invitedStudy": content = drawStudyInviteNotification(notification); break;
             default: console.dir(notification); console.error("unhandled notification"); break;
         }
 
