@@ -4,6 +4,7 @@ import lila.app._
 import lila.notify.Notification.Notifies
 
 import play.api.libs.json._
+import views.html
 
 object Notif extends LilaController {
 
@@ -15,7 +16,7 @@ object Notif extends LilaController {
     me =>
       val notifies = Notifies(me.id)
       env.notifyApi.getNotifications(notifies, 1, 10) map {
-        all => Ok(Json.toJson(all.currentPageResults)) as JSON
+        notifications => Ok(Json.toJson(notifications.currentPageResults)) as JSON
       }
   }
 
@@ -25,4 +26,13 @@ object Notif extends LilaController {
         val userId = Notifies(me.id)
         env.notifyApi.markAllRead(userId)
   }
+
+  def notificationsPage(page: Int) = Auth { implicit ctx =>
+    me =>
+      val notifies = Notifies(me.id)
+      env.notifyApi.getNotifications(notifies, 1, page) map {
+        notifications => Ok(html.notifications.view(notifications.currentPageResults.toList))
+      }
+  }
+
 }
