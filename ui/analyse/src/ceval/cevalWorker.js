@@ -1,21 +1,34 @@
 var m = require('mithril');
 
+var variantMap = {
+  fromPosition: 'Chess960',
+  chess960: 'Chess960',
+  atomic: 'Atomic',
+  horde: 'Horde',
+  crazyhouse: 'House',
+  kingOfTheHill: 'KingOfTheHill',
+  racingKings: 'Race',
+  threeCheck: '3Check'
+};
+
 module.exports = function(opts, name) {
 
-  var instance = new Worker(opts.path);
-  var switching = m.prop(false); // when switching to new work, info for previous can be emited
+  var busy = false;
+  var instance = null;
 
   var send = function(text) {
     instance.postMessage(text);
   };
 
   var processOutput = function(text, work) {
+    if (text.indexOf('bestmove ') === 0) {
+      busy = false;
+      return;
+    }
     if (/currmovenumber|lowerbound|upperbound/.test(text)) return;
     var matches = text.match(/depth (\d+) .*score (cp|mate) ([-\d]+) .*pv (.+)/);
     if (!matches) return;
     var depth = parseInt(matches[1]);
-    if (switching() && depth > 1) return; // stale info for previous work
-    switching(false); // got depth 1, it's now computing the current work
     if (depth < opts.minDepth) return;
     var cp, mate;
     if (matches[2] === 'cp') cp = parseFloat(matches[3]);
@@ -37,24 +50,31 @@ module.exports = function(opts, name) {
     });
   };
 
-  // warmup
-  send('uci');
+  var stop = function() {
+    if (busy && instance) {
+      instance.terminate();
+      instance = null;
+    }
+    if (!instance) {
+      instance = new Worker(opts.path);
+      var uciVariant = variantMap[opts.variant.key];
+      if (uciVariant) send('setoption name UCI_' + uciVariant + ' value true');
+      else send('uci'); // send something to warm up
+    }
+    busy = false;
+  };
 
-  if (opts.variant.key === 'chess960')
-    send('setoption name UCI_Chess960 value true');
+  stop();
 
   return {
     start: function(work) {
-      switching(true);
+      busy = true;
       send(['position', 'fen', work.position, 'moves'].concat(work.moves).join(' '));
       send('go depth ' + opts.maxDepth);
       instance.onmessage = function(msg) {
         processOutput(msg.data, work);
       };
     },
-    stop: function() {
-      send('stop');
-      switching(true);
-    }
+    stop: stop
   };
 };
