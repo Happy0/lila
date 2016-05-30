@@ -46,13 +46,10 @@ var m = require('mithril');
             default: console.dir(notification); console.error("unhandled notification"); break;
         }
 
-        console.dir(notification);
-
         var date = new Date(notification.date);
-
         return m('div', {class: 'site_notification'}, [
             content,
-            m('span', date.toLocaleString())
+            m('time', {class:"moment-from-now", datetime: date})
         ]);
     };
 
