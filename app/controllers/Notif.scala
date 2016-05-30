@@ -30,7 +30,7 @@ object Notif extends LilaController {
   def notificationsPage(page: Int) = Auth { implicit ctx =>
     me =>
       val notifies = Notifies(me.id)
-      env.notifyApi.getNotifications(notifies, 1, page) map {
+      env.notifyApi.getNotifications(notifies, page, perPage = 10) map {
         notifications => Ok(html.notifications.view(notifications.currentPageResults.toList))
       }
   }

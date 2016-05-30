@@ -64,5 +64,8 @@ module.exports = function(ctrl) {
 
     if (ctrl.vm.initiating) return m('div.initiating', m.trust(lichess.spinnerHtml));
 
-    return m('div', {class: "site_notifications_box"}, recentNotifications(ctrl));
+    return m('div', {class: "site_notifications_box"}, [
+        recentNotifications(ctrl),
+        m('a', {href:"/notifications"}, "See more")
+    ]);
 };

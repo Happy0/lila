@@ -3,9 +3,11 @@
 @title = @{"Notifications"}
 
 @moreCss = {
-@cssTag("site_notifications.css")
+@cssTag("siteNotifications.css")
 }
 
 @layout(title = title, moreCss = moreCss) {
-    <p>omghi2u</p>
+    @notifs.map { notif =>
+        <p>I'm a notificationarooni</p>
+    }
 }
