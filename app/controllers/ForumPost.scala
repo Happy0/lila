@@ -55,11 +55,13 @@ object ForumPost extends LilaController with ForumController {
 
   def edit(postId: String) = AuthBody(BodyParsers.parse.tolerantText) { implicit ctx =>
       me =>
-        val newText = ctx.body.body
+        implicit val req = ctx.body
 
-        postApi.editPost(postId, newText, me).map { _ =>
-          Ok()
-        }
+        forms.postEdit.bindFromRequest.fold(err => BadRequest("No post body"){data =>
+        postApi.editPost(postId, data.changes, me).map { post =>
+                  Redirect(routes.ForumPost.redirect(post.id))
+                }
+        })
   }
 
   def delete(categSlug: String, id: String) = Auth { implicit ctx =>
