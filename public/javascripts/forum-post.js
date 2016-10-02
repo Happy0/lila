@@ -12,12 +12,8 @@ $(function() {
 
   lichess.loadScript('/assets/vendor/jquery-textcomplete/dist/jquery.textcomplete.js').then(function() {
 
-    var getTopicId = function() {
-      return $('.post-text-area').attr('data-topic');
-    };
-
     var getThreadParticipants = function() {
-      var topicId = getTopicId();
+      var topicId = $('.post-text-area').attr('data-topic');
 
       if (!topicId) {
         return jQuery.Deferred().resolve([]);
@@ -26,14 +22,11 @@ $(function() {
           url: "/forum/participants/" + topicId
         });
       }
-
     };
 
     var searchCandidates = function(term, candidateUsers) {
-      // We use jQuery's map because returning 'null' removes it from the list.
-      // This follows jquery-autocomplete's semantics.
-      return $.map(candidateUsers, function(user) {
-        return user.indexOf(term) === 0 ? user : null;
+      return candidateUsers.filter(function(user) {
+        return user.toLowerCase().indexOf(term.toLowerCase()) === 0;
       });
     };
 
@@ -43,7 +36,7 @@ $(function() {
     var threadParticipants = Promise.resolve([]);
 
     $('.post-text-area').textcomplete([{
-      match: /\B@(\w*)$/,
+      match: /(^|\s)@(|[a-zA-Z_-][\w-]{0,19})$/,
       search: function(term, callback) {
 
         if (term.length < 3) {
@@ -55,20 +48,22 @@ $(function() {
           });
         } else {
           $.ajax({
-            url: "/player/autocomplete?term=" + term,
+            url: "/player/autocomplete",
+            data: {
+              term: term
+            },
             success: function(candidateUsers) {
               callback(searchCandidates(term, candidateUsers));
             }
           });
         }
       },
-      index: 1,
       replace: function(mention) {
-        return '@' + mention + ' ';
+        return '$1@' + mention + ' ';
       }
     }], {
-      'placement': 'top',
-      'appendTo': '#lichess_forum'
+      placement: 'top',
+      appendTo: '#lichess_forum'
     });
 
     $('.post-text-area').one('focus', function() {
